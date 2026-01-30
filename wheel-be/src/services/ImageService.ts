@@ -54,6 +54,6 @@ export async function deleteImage(input: DeleteImageInput): Promise<ImageActionR
   return {
     jobId: job.id,
     status: job.status,
-    message: 'Image deleted',
+    message: 'Image deletion queued',
   };
 }

@@ -76,7 +76,8 @@ export async function list(filter: ListAuditLogsFilter): Promise<{ logs: AuditLo
   }
 
   if (filter.days) {
-    conditions.push(`created_at >= NOW() - INTERVAL '${filter.days} days'`);
+    conditions.push(`created_at >= NOW() - INTERVAL '1 day' * $${paramIndex++}`);
+    params.push(filter.days);
   }
 
   const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';

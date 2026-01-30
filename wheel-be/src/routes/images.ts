@@ -77,25 +77,26 @@ router.post('/pull', authMiddleware, async (req: Request, res: Response, next: N
 // Delete image
 router.delete('/:id', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const rudderId = (req.body.rudder_id || req.query.rudder_id) as string | undefined;
+    const rudderId = req.query.rudder_id as string | undefined;
     if (!rudderId) {
-      throw new BadRequestError('rudder_id is required');
+      throw new BadRequestError('rudder_id query parameter is required');
     }
 
     const force = req.query.force === 'true';
+    const imageId = req.params.id as string;
 
     const result = await ImageService.deleteImage({
       rudderId,
-      imageId: req.params.id as string,
+      imageId,
       force,
     });
 
     await AuditLogService.createAuditLog({
       userId: req.user?.userId,
-      rudderId: rudderId as string,
+      rudderId,
       action: 'image.delete',
       status: 'success',
-      params: { imageId: req.params.id, force },
+      params: { imageId, force },
       ipAddress: req.ip,
     });
 

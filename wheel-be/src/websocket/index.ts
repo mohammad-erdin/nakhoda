@@ -227,13 +227,15 @@ export async function dispatchJob(rudderId: string, jobId: string, action: strin
     return false;
   }
 
+  // Update status before dispatching to avoid race condition
+  await JobService.updateJobStatus(jobId, 'running');
+
   socket.emit(WS_EVENTS.WHEEL_JOB_DISPATCH, {
     job_id: jobId,
     action,
     params,
   });
 
-  await JobService.updateJobStatus(jobId, 'running');
   logger.info('Job dispatched', { jobId, rudderId, action });
 
   return true;

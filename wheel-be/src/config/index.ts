@@ -2,12 +2,15 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-function requireEnv(key: string): string {
+function requireEnv(key: string, devDefault?: string): string {
   const value = process.env[key];
-  if (!value && process.env.NODE_ENV === 'production') {
-    throw new Error(`Missing required environment variable: ${key}`);
+  if (!value) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error(`Missing required environment variable: ${key}`);
+    }
+    return devDefault || '';
   }
-  return value || '';
+  return value;
 }
 
 function getEnv(key: string, defaultValue: string): string {
@@ -38,7 +41,7 @@ export const config = {
   },
 
   jwt: {
-    secret: requireEnv('JWT_SECRET') || 'dev-secret-key',
+    secret: requireEnv('JWT_SECRET', 'dev-secret-key-do-not-use-in-production'),
     expiresIn: getEnv('JWT_EXPIRES_IN', '24h'),
   },
 

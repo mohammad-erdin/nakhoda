@@ -59,6 +59,6 @@ export async function deleteVolume(input: DeleteVolumeInput): Promise<VolumeActi
   return {
     jobId: job.id,
     status: job.status,
-    message: 'Volume deleted',
+    message: 'Volume deletion queued',
   };
 }

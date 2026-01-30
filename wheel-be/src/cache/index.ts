@@ -71,16 +71,24 @@ export async function deleteRudderSession(rudderId: string): Promise<void> {
 }
 
 export async function getAllRudderSessions(): Promise<RudderSession[]> {
-  const keys = await redis.keys(`${RUDDER_SESSION_PREFIX}*${RUDDER_SESSION_SUFFIX}`);
-  if (keys.length === 0) return [];
-
   const sessions: RudderSession[] = [];
-  for (const key of keys) {
-    const data = await redis.get(key);
-    if (data) {
-      sessions.push(JSON.parse(data));
+  const pattern = `${RUDDER_SESSION_PREFIX}*${RUDDER_SESSION_SUFFIX}`;
+  let cursor = '0';
+
+  do {
+    const [nextCursor, keys] = await redis.scan(cursor, 'MATCH', pattern, 'COUNT', 100);
+    cursor = nextCursor;
+
+    if (keys.length > 0) {
+      const values = await redis.mget(...keys);
+      for (const data of values) {
+        if (data) {
+          sessions.push(JSON.parse(data));
+        }
+      }
     }
-  }
+  } while (cursor !== '0');
+
   return sessions;
 }
 

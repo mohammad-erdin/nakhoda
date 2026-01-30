@@ -168,29 +168,30 @@ router.post('/:id/restart', authMiddleware, async (req: Request, res: Response, 
 // Delete container
 router.delete('/:id', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const rudderId = (req.body.rudder_id || req.query.rudder_id) as string | undefined;
+    const rudderId = req.query.rudder_id as string | undefined;
     if (!rudderId) {
-      throw new BadRequestError('rudder_id is required');
+      throw new BadRequestError('rudder_id query parameter is required');
     }
 
     const force = req.query.force === 'true';
+    const containerId = req.params.id as string;
 
     const result = await ContainerService.deleteContainer({
-      containerId: req.params.id as string,
+      containerId,
       rudderId,
       force,
     });
 
     await AuditLogService.createAuditLog({
       userId: req.user?.userId,
-      rudderId: rudderId as string,
+      rudderId,
       action: 'container.delete',
       status: 'success',
-      params: { containerId: req.params.id, force },
+      params: { containerId, force },
       ipAddress: req.ip,
     });
 
-    res.json({ ...result, message: 'Container deleted' });
+    res.json({ ...result, message: 'Container deletion queued' });
   } catch (error) {
     next(error);
   }

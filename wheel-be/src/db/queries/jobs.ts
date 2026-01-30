@@ -63,7 +63,8 @@ export async function list(filter: ListJobsFilter): Promise<{ jobs: JobRow[]; to
   }
 
   if (filter.days) {
-    conditions.push(`created_at >= NOW() - INTERVAL '${filter.days} days'`);
+    conditions.push(`created_at >= NOW() - INTERVAL '1 day' * $${paramIndex++}`);
+    params.push(filter.days);
   }
 
   const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
@@ -113,7 +114,8 @@ export async function updateStatus(
 
 export async function cleanupOld(retentionDays: number): Promise<number> {
   const result = await query(
-    `DELETE FROM jobs WHERE created_at < NOW() - INTERVAL '${retentionDays} days'`
+    `DELETE FROM jobs WHERE created_at < NOW() - INTERVAL '1 day' * $1`,
+    [retentionDays]
   );
   return result.rowCount || 0;
 }

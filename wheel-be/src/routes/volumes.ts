@@ -58,25 +58,26 @@ router.post('/create', authMiddleware, async (req: Request, res: Response, next:
 // Delete volume
 router.delete('/:id', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const rudderId = (req.body.rudder_id || req.query.rudder_id) as string | undefined;
+    const rudderId = req.query.rudder_id as string | undefined;
     if (!rudderId) {
-      throw new BadRequestError('rudder_id is required');
+      throw new BadRequestError('rudder_id query parameter is required');
     }
 
     const force = req.query.force === 'true';
+    const volumeId = req.params.id as string;
 
     const result = await VolumeService.deleteVolume({
       rudderId,
-      volumeId: req.params.id as string,
+      volumeId,
       force,
     });
 
     await AuditLogService.createAuditLog({
       userId: req.user?.userId,
-      rudderId: rudderId as string,
+      rudderId,
       action: 'volume.delete',
       status: 'success',
-      params: { volumeId: req.params.id, force },
+      params: { volumeId, force },
       ipAddress: req.ip,
     });
 
