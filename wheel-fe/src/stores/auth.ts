@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import { apiPost } from '@/utils/apiClient';
+import { apiPost, apiGet } from '@/utils/apiClient';
 import type { LoginResponse } from '@nakhoda/shared/types';
 import { API_ENDPOINTS } from '@nakhoda/shared/constants';
 
@@ -18,14 +18,17 @@ export const useAuth = defineStore('auth', () => {
   const isAuthenticated = computed(() => !!token.value);
   const checked = ref(false);
 
-  const login = async (inputToken: string) => {
+  const login = async (username: string, password: string) => {
     isLoading.value = true;
     error.value = null;
     try {
-      const data = await apiPost<LoginResponse>(API_ENDPOINTS.AUTH.LOGIN, { token: inputToken });
-      token.value = data.sessionToken || inputToken;
+      const data = await apiPost<LoginResponse>(API_ENDPOINTS.AUTH.LOGIN, { 
+        username, 
+        password 
+      });
+      token.value = data.sessionToken || 'auth-token';
       user.value = data.user;
-      localStorage.setItem('auth_token', token.value || inputToken);
+      localStorage.setItem('auth_token', token.value);
       checked.value = true;
     } catch (err) {
       error.value = (err as Error).message;
