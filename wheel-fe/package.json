@@ -1,0 +1,27 @@
+{
+    "name": "nakhoda-wheel-fe",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview",
+        "typecheck": "vue-tsc --noEmit"
+    },
+    "dependencies": {
+        "ant-design-vue": "^4.2.3",
+        "pinia": "^2.1.7",
+        "remixicon": "^4.5.0",
+        "socket.io-client": "^4.7.5",
+        "vue": "^3.5.12",
+        "vue-router": "^4.4.5"
+    },
+    "devDependencies": {
+        "@types/node": "^22.10.7",
+        "@vitejs/plugin-vue": "^5.1.4",
+        "typescript": "^5.6.3",
+        "vite": "^5.4.11",
+        "vue-tsc": "^2.1.10"
+    }
+}

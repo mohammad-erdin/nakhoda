@@ -431,6 +431,7 @@ Aggregation: ELK Stack or Loki
 - Draft UI routes, state model, and API contract (v1)
 
 ### **Milestone 2 — Wheel FE (Vue 3)**
+- Tech stack: Node.js 20 + npm, Ant Design Vue, Remixicon, Pinia, Vue Router
 - Build Vue 3 UI shell (layout, navigation, rudder list)
 - Auth flow (login UI + token storage)
 - Rudder status dashboard (online/offline + heartbeat age)
