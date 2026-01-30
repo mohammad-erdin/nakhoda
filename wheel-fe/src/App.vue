@@ -16,7 +16,7 @@
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAuth } from '@/stores/auth';
-import AppLayout from '@/components/BlankLayout.vue';
+import AppLayout from '@/components/AppLayout.vue';
 const route = useRoute();
 const auth = useAuth();
 const showLayout = computed(() => route.meta.requiresAuth !== false && auth.checked);

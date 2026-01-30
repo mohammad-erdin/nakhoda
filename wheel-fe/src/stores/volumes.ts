@@ -13,8 +13,9 @@ export const useVolumes = defineStore('volumes', () => {
     loading.value = true;
     error.value = null;
     try {
-      const response = await apiGet<Volume[]>(API_ENDPOINTS.VOLUMES.LIST);
-      volumes.value = response;
+      const response = await apiGet<any>(API_ENDPOINTS.VOLUMES.LIST);
+      // Handle both direct array and paginated response
+      volumes.value = Array.isArray(response) ? response : (response.items || []);
     } catch (err) {
       error.value = (err as Error).message;
     } finally {

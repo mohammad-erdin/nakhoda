@@ -32,6 +32,7 @@ import { computed, onMounted } from 'vue';
 import { useRudders } from '@/stores/rudders';
 import { useContainers } from '@/stores/containers';
 import { useJobs } from '@/stores/jobs';
+import type { Container, Job } from '@nakhoda/shared/types';
 import StatCard from '@/components/StatCard.vue';
 import JobSummary from '@/components/JobSummary.vue';
 import QuickActions from '@/components/QuickActions.vue';
@@ -44,17 +45,17 @@ const jobs = useJobs();
 
 const onlineRudders = computed(() => rudders.onlineRudders.length);
 const runningContainers = computed(() =>
-  containers.containers.filter((c: import('@nakhoda/shared/types').Container) => c.status === 'running').length
+  (containers.containers as Container[]).filter((c: Container) => c.status === 'running').length
 );
 const failedJobs = computed(() =>
-  jobs.jobs.filter((j: import('@nakhoda/shared/types').Job) => j.status === 'failed').length
+  (jobs.jobs as Job[]).filter((j: Job) => j.status === 'failed').length
 );
 
 const jobCounts = computed(() => ({
-  pending: jobs.jobs.filter((j: import('@nakhoda/shared/types').Job) => j.status === 'pending').length,
-  running: jobs.jobs.filter((j: import('@nakhoda/shared/types').Job) => j.status === 'running').length,
-  done: jobs.jobs.filter((j: import('@nakhoda/shared/types').Job) => j.status === 'done').length,
-  failed: jobs.jobs.filter((j: import('@nakhoda/shared/types').Job) => j.status === 'failed').length,
+  pending: (jobs.jobs as Job[]).filter((j: Job) => j.status === 'pending').length,
+  running: (jobs.jobs as Job[]).filter((j: Job) => j.status === 'running').length,
+  done: (jobs.jobs as Job[]).filter((j: Job) => j.status === 'done').length,
+  failed: (jobs.jobs as Job[]).filter((j: Job) => j.status === 'failed').length,
 }));
 
 onMounted(() => {

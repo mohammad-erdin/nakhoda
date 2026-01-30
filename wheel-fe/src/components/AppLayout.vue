@@ -47,10 +47,17 @@ onMounted(() => {
   border-right: 1px solid var(--color-border);
 }
 
+.sider :deep(.ant-layout-sider-trigger) {
+  background: var(--color-surface-alt) !important;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text) !important;
+}
+
 .logo {
   height: 64px;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   padding: 0 16px;
   color: var(--color-text);
@@ -59,11 +66,13 @@ onMounted(() => {
 }
 
 .logo__icon {
-  font-size: 20px;
+  font-size: 24px;
+  flex-shrink: 0;
 }
 
 .logo__text {
   font-size: 16px;
+  white-space: nowrap;
 }
 
 .content {
