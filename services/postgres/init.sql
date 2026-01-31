@@ -67,9 +67,9 @@ CREATE INDEX IF NOT EXISTS idx_audit_logs_created ON audit_logs(created_at DESC)
 
 -- Seed: Create admin user (password: admin hashed with bcrypt)
 -- For dev: plaintext is "admin", in production use proper bcrypt hashing
--- Hash: $2b$10$9h0k.e1I4Y7e5YZ5K5L5h.Wz5c5V5a5M5n5L5j5G5f5D5c5B5A5
+-- Hash: $2b$10$7Bc5gR7FVJQox/yaw3w4HeN8K36YRPnYfelMzBBMb0JT0ZmhZuHWO
 INSERT INTO users (username, password_hash, name, role)
-VALUES ('admin', '$2b$10$9h0k.e1I4Y7e5YZ5K5L5h.Wz5c5V5a5M5n5L5j5G5f5D5c5B5A5', 'Administrator', 'admin')
+VALUES ('admin', '$2b$10$7Bc5gR7FVJQox/yaw3w4HeN8K36YRPnYfelMzBBMb0JT0ZmhZuHWO', 'Administrator', 'admin')
 ON CONFLICT (username) DO NOTHING;
 
 -- Verify admin user created

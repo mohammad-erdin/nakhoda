@@ -2,13 +2,29 @@
   <div class="login">
     <div class="login__card">
       <h1>Welcome to Nakhoda</h1>
-      <p class="muted">Enter your access token to continue.</p>
+      <p class="muted">Enter your credentials to continue.</p>
 
-      <a-form layout="vertical" @finish="handleLogin">
-        <a-form-item label="Access Token">
-          <a-input-password v-model:value="token" placeholder="Token" />
+      <a-form 
+        layout="vertical" 
+        :model="formData" 
+        @finish="handleLogin"
+        @finishFailed="onFinishFailed"
+      >
+        <a-form-item 
+          label="Username" 
+          name="username"
+          :rules="[{ required: true, message: 'Username is required' }]"
+        >
+          <a-input v-model:value="formData.username" placeholder="admin" />
         </a-form-item>
-        <a-alert v-if="auth.error" type="error" :message="auth.error" show-icon />
+        <a-form-item 
+          label="Password" 
+          name="password"
+          :rules="[{ required: true, message: 'Password is required' }]"
+        >
+          <a-input-password v-model:value="formData.password" placeholder="Password" />
+        </a-form-item>
+        <a-alert v-if="auth.error" type="error" :message="auth.error" show-icon style="margin-bottom: 16px;" />
         <a-button type="primary" html-type="submit" :loading="auth.isLoading" block>
           Login
         </a-button>
@@ -18,23 +34,33 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { reactive } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useAuth } from '@/stores/auth';
+import type { FormInstance } from 'ant-design-vue';
 
-const token = ref('');
 const router = useRouter();
 const route = useRoute();
 const auth = useAuth();
 
+const formData = reactive({
+  username: '',
+  password: '',
+});
+
 const handleLogin = async () => {
   try {
-    await auth.login(token.value);
+    await auth.login(formData.username, formData.password);
     const redirect = route.query.redirect as string | undefined;
     router.push(redirect || '/');
-  } catch {
+  } catch (err) {
     // handled by store
+    console.error('Login error:', err);
   }
+};
+
+const onFinishFailed = (errorInfo: any) => {
+  console.log('Failed:', errorInfo);
 };
 </script>
 

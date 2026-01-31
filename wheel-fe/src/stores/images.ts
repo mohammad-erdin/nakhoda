@@ -13,8 +13,9 @@ export const useImages = defineStore('images', () => {
     loading.value = true;
     error.value = null;
     try {
-      const response = await apiGet<Image[]>(API_ENDPOINTS.IMAGES.LIST);
-      images.value = response;
+      const response = await apiGet<any>(API_ENDPOINTS.IMAGES.LIST);
+      // Handle both direct array and paginated response
+      images.value = Array.isArray(response) ? response : (response.items || []);
     } catch (err) {
       error.value = (err as Error).message;
     } finally {

@@ -2,10 +2,12 @@
   <div class="page">
     <div class="page__title">Settings</div>
     <a-form layout="vertical" class="card">
-      <a-form-item label="Theme">
-        <a-select v-model:value="theme" style="width: 200px">
-          <a-select-option value="dark">Dark</a-select-option>
-          <a-select-option value="light">Light</a-select-option>
+      <a-form-item label="Job Retention Days">
+        <a-input-number v-model:value="jobRetentionDays" :min="1" :max="365" style="width: 200px" />
+      </a-form-item>
+      <a-form-item label="Language">
+        <a-select v-model:value="language" style="width: 200px">
+          <a-select-option value="en">English</a-select-option>
         </a-select>
       </a-form-item>
       <a-button type="primary" @click="save">Save</a-button>
@@ -15,12 +17,12 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useUI } from '@/stores/ui';
+import { message } from 'ant-design-vue';
 
-const ui = useUI();
-const theme = ref(ui.theme);
+const jobRetentionDays = ref(30);
+const language = ref('en');
 
 const save = () => {
-  ui.setTheme(theme.value);
+  message.success('Settings saved successfully');
 };
 </script>

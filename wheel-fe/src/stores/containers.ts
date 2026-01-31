@@ -34,8 +34,9 @@ export const useContainers = defineStore('containers', () => {
     loading.value = true;
     error.value = null;
     try {
-      const response = await apiGet<Container[]>(API_ENDPOINTS.CONTAINERS.LIST);
-      containers.value = response;
+      const response = await apiGet<any>(API_ENDPOINTS.CONTAINERS.LIST);
+      // Handle both direct array and paginated response
+      containers.value = Array.isArray(response) ? response : (response.items || []);
       page.value = 1;
     } catch (err) {
       error.value = (err as Error).message;

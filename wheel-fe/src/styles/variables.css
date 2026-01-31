@@ -7,3 +7,23 @@
   --color-text: #e5e7eb;
   --color-muted: #9ca3af;
 }
+
+:root[data-theme="light"] {
+  --color-bg: #f1f5f9;
+  --color-surface: #ffffff;
+  --color-surface-alt: #e2e8f0;
+  --color-border: #cbd5e1;
+  --color-primary: #2563eb;
+  --color-text: #0f172a;
+  --color-muted: #475569;
+}
+
+:root[data-theme="dark"] {
+  --color-bg: #0f172a;
+  --color-surface: #111827;
+  --color-surface-alt: #1f2937;
+  --color-border: #1f2937;
+  --color-primary: #3b82f6;
+  --color-text: #e5e7eb;
+  --color-muted: #9ca3af;
+}

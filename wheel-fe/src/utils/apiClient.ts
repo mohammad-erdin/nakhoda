@@ -23,18 +23,29 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    method: options.method || 'GET',
+  const url = `${API_BASE_URL}${path}`;
+  const method = options.method || 'GET';
+  const body = options.body ? JSON.stringify(options.body) : undefined;
+
+  console.log(`[API] ${method} ${url}`, body ? JSON.parse(body) : '');
+
+  const response = await fetch(url, {
+    method,
     headers,
-    body: options.body ? JSON.stringify(options.body) : undefined,
+    body,
   });
+
+  console.log(`[API] Response: ${response.status} ${response.statusText}`);
 
   if (!response.ok) {
     const message = await response.text();
+    console.error(`[API] Error: ${message}`);
     throw new Error(message || 'Request failed');
   }
 
-  return response.json() as Promise<T>;
+  const data = await response.json() as Promise<T>;
+  console.log(`[API] Data:`, data);
+  return data;
 }
 
 export const apiGet = <T>(path: string) => apiRequest<T>(path);

@@ -13,8 +13,9 @@ export const useJobs = defineStore('jobs', () => {
     loading.value = true;
     error.value = null;
     try {
-      const response = await apiGet<Job[]>(API_ENDPOINTS.JOBS.LIST);
-      jobs.value = response;
+      const response = await apiGet<any>(API_ENDPOINTS.JOBS.LIST);
+      // Handle both direct array and paginated response
+      jobs.value = Array.isArray(response) ? response : (response.items || []);
     } catch (err) {
       error.value = (err as Error).message;
     } finally {
