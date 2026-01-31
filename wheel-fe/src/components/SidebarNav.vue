@@ -9,7 +9,7 @@
     <a-menu-item key="/rudders">
       <router-link to="/rudders">
         <i class="ri-router-line"></i>
-        <span v-if="!collapsed">Rudders</span>
+        <span v-if="!collapsed">Servers</span>
       </router-link>
     </a-menu-item>
     <a-menu-item key="/containers">

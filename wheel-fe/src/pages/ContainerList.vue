@@ -6,18 +6,19 @@
     </div>
 
     <div class="filters">
-      <a-select v-model:value="filters.status" placeholder="Status" allowClear @change="applyFilters" style="width: 160px">
+      <a-select v-model:value="filters.rudder" placeholder="Server" allowClear @change="applyFilters" style="width: 200px">
+        <a-select-option v-for="r in rudders.rudders" :key="r.id" :value="r.id">{{ r.hostname || r.id }}</a-select-option>
+      </a-select>
+
+      <a-select v-model:value="filters.status" placeholder="Status" allowClear @change="applyFilters" style="width: 140px">
         <a-select-option value="running">Running</a-select-option>
         <a-select-option value="stopped">Stopped</a-select-option>
         <a-select-option value="exited">Exited</a-select-option>
       </a-select>
 
-      <a-select v-model:value="filters.rudder" placeholder="Rudder" allowClear @change="applyFilters" style="width: 240px">
-        <a-select-option v-for="r in rudders.rudders" :key="r.id" :value="r.id">{{ r.hostname || r.id }}</a-select-option>
-      </a-select>
+      <div class="filters__spacer"></div>
 
-      <a-input v-model:value="filters.image" placeholder="Image" style="width: 200px" @pressEnter="applyFilters" />
-      <a-button @click="applyFilters">Apply</a-button>
+      <a-input v-model:value="filters.image" placeholder="Search..." style="width: 200px" @input="applyFilters" />
     </div>
 
     <ContainerTable :containers="containers.paginatedContainers" :loading="containers.loading" @delete="handleDelete" />
@@ -58,5 +59,10 @@ onMounted(() => {
   display: flex;
   gap: 12px;
   margin: 16px 0;
+  align-items: center;
+}
+
+.filters__spacer {
+  flex: 1;
 }
 </style>
