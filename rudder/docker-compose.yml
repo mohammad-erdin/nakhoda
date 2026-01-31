@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  rudder:
+    build: .
+    container_name: nakhoda-rudder
+    environment:
+      WHEEL_URL: ws://host.docker.internal:3000
+      RUDDER_TOKEN: rudder_token_1
+      RUDDER_ID: rudder_1
+      RUDDER_HOSTNAME: docker-host-1
+      LOG_LEVEL: info
+      HEARTBEAT_INTERVAL_MS: 30000
+      RECONNECT_MAX_DELAY_MS: 60000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
