@@ -128,11 +128,11 @@ body {
   background: rgba(59, 130, 246, 0.05) !important;
 }
 
-.ant-tag {
+/* .ant-tag {
   background-color: var(--color-surface-alt) !important;
   border-color: var(--color-border) !important;
   color: var(--color-text) !important;
-}
+} */
 
 .ant-select-selector {
   background-color: var(--color-surface-alt) !important;

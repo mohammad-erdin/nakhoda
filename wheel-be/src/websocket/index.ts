@@ -76,6 +76,7 @@ function handleConnection(socket: Socket): void {
   socket.on(WS_EVENTS.RUDDER_REGISTER, async (payload: RudderRegisterPayload) => {
     try {
       // Validate token
+      console.info(config.rudderTokens);
       if (!config.rudderTokens.includes(payload.token)) {
         logger.warn('Invalid rudder token', { socketId: socket.id });
         socket.emit(WS_EVENTS.RUDDER_ERROR, { error: 'Invalid token' });

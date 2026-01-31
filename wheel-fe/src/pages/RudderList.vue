@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <div class="flex flex--between">
-      <div class="page__title">Rudders</div>
+      <div class="page__title">Servers</div>
       <a-button @click="rudders.getRudders" :loading="rudders.loading">Refresh</a-button>
     </div>
     <RudderTable :rudders="rudders.rudders" :loading="rudders.loading" />

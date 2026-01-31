@@ -5,10 +5,12 @@ Establish the complete project foundation with directory structure, naming conve
 
 ## Objectives
 
-- [ ] Define repo layout (wheel-fe, wheel-be, rudder, shared, docs)
-- [ ] Define repo layout for services used (redis, postgres, /data)
-- [ ] Establish naming conventions + module boundaries
-- [ ] Draft UI routes, state model, and API contract (v1)
+- [x] Define repo layout (wheel-fe, wheel-be, rudder, shared, tecth-doc)
+- [x] Define repo layout for services (postgres, redis, rudder-1, /data)
+- [x] Create unified dev-compose.yml with 5 services
+- [x] Create unified .env configuration
+- [x] Establish naming conventions + module boundaries
+- [x] Draft UI routes, state model, and API contract (v1)
 
 ## Deliverables
 
@@ -21,7 +23,7 @@ Establish the complete project foundation with directory structure, naming conve
 - Module boundaries
 
 ### 2. Code Conventions
-**File**: [docs/CONVENTIONS.md](CONVENTIONS.md)
+**File**: [CONVENTIONS.md](CONVENTIONS.md)
 
 - TypeScript + General rules
 - Vue 3 component structure
@@ -31,7 +33,7 @@ Establish the complete project foundation with directory structure, naming conve
 - Commit message standards
 
 ### 3. Frontend Routes
-**File**: [docs/ROUTES.md](ROUTES.md)
+**File**: [ROUTES.md](ROUTES.md)
 
 - Complete Vue Router route definitions
 - Page components breakdown
@@ -52,7 +54,7 @@ Establish the complete project foundation with directory structure, naming conve
 - `/settings` → Settings
 
 ### 4. State Model
-**File**: [docs/STATE-MODEL.md](STATE-MODEL.md)
+**File**: [STATE-MODEL.md](STATE-MODEL.md)
 
 - Pinia store architecture
 - 7 stores: auth, rudders, containers, images, volumes, jobs, ui
@@ -60,7 +62,7 @@ Establish the complete project foundation with directory structure, naming conve
 - Type-safe state management
 
 ### 5. API Contract v1
-**File**: [docs/API.md](../docs/API.md)
+**File**: [API.md](API.md)
 
 - Base URL + authentication
 - All REST endpoints (Rudders, Containers, Images, Volumes, Jobs, Audit Logs, Settings)
@@ -69,7 +71,7 @@ Establish the complete project foundation with directory structure, naming conve
 - Rate limiting headers
 
 ### 6. Shared Types Package
-**File**: [docs/SHARED-TYPES.md](SHARED-TYPES.md)
+**File**: [SHARED-TYPES.md](SHARED-TYPES.md)
 
 - NPM package structure for `@nakhoda/shared`
 - Types: API, entities, WebSocket

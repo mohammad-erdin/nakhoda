@@ -379,24 +379,6 @@ router.get('/live', (req, res) => {
   res.json({ status: 'alive', uptime: process.uptime() });
 });
 ```
-
-**Kubernetes Usage**:
-```yaml
-livenessProbe:
-  httpGet:
-    path: /health/live
-    port: 3000
-  initialDelaySeconds: 10
-  periodSeconds: 10
-
-readinessProbe:
-  httpGet:
-    path: /health/ready
-    port: 3000
-  initialDelaySeconds: 5
-  periodSeconds: 5
-```
-
 ### 8. Graceful Shutdown
 
 **File**: `wheel-be/src/server.ts`

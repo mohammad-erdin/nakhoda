@@ -2,6 +2,7 @@ import Redis from 'ioredis';
 import { config } from '../config/index.js';
 import { logger } from '../utils/logger.js';
 
+
 export const redis = new Redis.default({
   host: config.redis.host,
   port: config.redis.port,

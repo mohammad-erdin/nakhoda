@@ -108,7 +108,45 @@
    └───────────────┴─────────┴──────────────────┘
 ```
 
-### Component Responsibilities
+### Development Stack (Local `dev-compose.yml`)
+
+For local development, we use a simplified 5-service setup:
+
+```
+┌─────────────────────────────────────────┐
+│       Docker Compose (Local Dev)        │
+├─────────────────────────────────────────┤
+│                                         │
+│  ┌─────────┐      ┌─────────┐           │
+│  │ Wheel   │      │ Wheel   │           │
+│  │ FE      │      │ BE      │           │
+│  │ :5173   │      │ :3000   │           │
+│  └────┬────┘      └────┬────┘           │
+│       │                │                │
+│  ┌────▼────────────────▼────┐           │
+│  │   Redis Cache :6379      │           │
+│  │   PostgreSQL  :5432      │           │
+│  └──────────────────────────┘           │
+│                │                        │
+│           ┌────▼────┐                   │
+│           │ Rudder-1│                   │
+│           │  Agent  │                   │
+│           │(dev)    │                   │
+│           └────┬────┘                   │
+│                │                        │
+│        /var/run/docker.sock             │
+│                                         │
+└─────────────────────────────────────────┘
+```
+
+**5 Services**:
+1. **wheel-fe** - Vue 3 UI on port 5173
+2. **wheel-be** - Node.js API + WebSocket on ports 3000/8080
+3. **postgres** - Database on port 5432
+4. **redis** - Cache on port 6379
+5. **rudder-1** - Docker agent (for testing)
+
+**Start with**: `docker compose -f dev-compose.yml up -d`
 
 **Wheel (Node.js Backend + UI)**
 - REST API for CRUD operations (containers, images, volumes)
@@ -424,9 +462,10 @@ Aggregation: ELK Stack or Loki
 
 ## 13. Roadmap & Milestones
 
-### **Milestone 1 — Project Structure & Design**
-- Define repo layout (wheel-fe, wheel-be, rudder, shared, docs)
-- Define repo layout for services used (redis, postgre, /data)
+### **Milestone 1 — Project Structure & Design** ✅
+- Define repo layout (wheel-fe, wheel-be, rudder, shared, tecth-doc)
+- Root-level postgres/ and redis/ directories with dev-compose.yml
+- Unified .env configuration for all services
 - Establish naming conventions + module boundaries
 - Draft UI routes, state model, and API contract (v1)
 

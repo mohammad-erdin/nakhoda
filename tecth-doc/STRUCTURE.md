@@ -16,7 +16,8 @@ nakhoda/
 │   ├── index.html
 │   ├── vite.config.ts
 │   ├── package.json
-│   └── tsconfig.json
+│   ├── tsconfig.json
+│   └── Dockerfile               # Development container
 │
 ├── wheel-be/                    # Node.js Backend (Express)
 │   ├── src/
@@ -29,7 +30,7 @@ nakhoda/
 │   │   └── server.ts            # Entry point
 │   ├── package.json
 │   ├── tsconfig.json
-│   └── .env.example
+│   └── Dockerfile               # Development container
 │
 ├── rudder/                      # Docker Agent (Node.js)
 │   ├── src/
@@ -38,7 +39,8 @@ nakhoda/
 │   │   └── index.ts             # Entry point
 │   ├── package.json
 │   ├── tsconfig.json
-│   └── .env.example
+│   ├── Dockerfile
+│   └── docker-compose.yml       # Standalone rudder deployment
 │
 ├── shared/                      # Shared Types & Constants
 │   ├── types/
@@ -53,29 +55,29 @@ nakhoda/
 │   │   └── ws-events.ts         # WebSocket event names
 │   └── package.json
 │
-├── services/                    # Docker Compose Services
-│   ├── postgres/
-│   │   ├── init.sql             # Database schema + seed
-│   │   └── Dockerfile
-│   ├── redis/
-│   │   └── redis.conf
-│   └── docker-compose.yml       # Local dev stack
+├── postgres/                    # PostgreSQL Configuration
+│   └── init.sql                 # Database schema + seed
+│
+├── redis/                       # Redis Configuration
+│   └── redis.conf               # Redis config (if needed)
 │
 ├── data/                        # Volume mounts (git-ignored)
 │   ├── postgres/
 │   └── redis/
 │
-├── docs/
+├── tecth-doc/                   # Technical Documentation
 │   ├── CONVENTIONS.md           # Naming + structure rules
 │   ├── API.md                   # API contract v1
+│   ├── DATABASE.md              # Database setup guide
 │   ├── STATE-MODEL.md           # Frontend state structure
-│   └── ROUTES.md                # Route definitions
+│   ├── ROUTES.md                # Route definitions
+│   ├── README.md                # Blueprint & architecture
+│   └── MILESTONE-*.md           # Implementation milestones
 │
-├── BluePrint.md                 # System architecture
-├── STRUCTURE.md                 # This file
-├── README.md
+├── dev-compose.yml              # Development stack (all 4 services)
+├── .env                         # Environment variables (all services)
 ├── .gitignore
-└── .env.example                 # Root env (if needed)
+└── README.md                    # Project README
 ```
 
 ---
@@ -108,10 +110,19 @@ nakhoda/
 - **constants/** → Enums and hardcoded values (JOB_ACTIONS, WS_EVENTS, API_ENDPOINTS)
 - **Published to NPM or local monorepo** (shared across wheel-fe, wheel-be, rudder)
 
-### `services/` — Docker Compose Stack
-- **postgres/** → PostgreSQL with init SQL for schema + migrations
-- **redis/** → Redis config
-- **docker-compose.yml** → Local development stack (all services)
+### `postgres/` — PostgreSQL Configuration
+- **init.sql** → Database schema initialization + seed data
+- Used by `postgres` service in `dev-compose.yml`
+
+### `redis/` — Redis Configuration
+- **redis.conf** → Redis configuration (optional)
+- Used by `redis` service in `dev-compose.yml`
+
+### `dev-compose.yml` — Development Docker Stack
+- **All 5 services**: postgres, redis, wheel-be, wheel-fe, rudder-1
+- **Hot reload enabled** for wheel-be and wheel-fe (mounted source directories)
+- **Rudder-1**: Included as Docker agent connected to wheel-be for local development
+- **Single command startup**: `docker compose -f dev-compose.yml up -d`
 
 ### `data/` — Data Volumes
 - **postgres/** → PostgreSQL data (git-ignored)
@@ -180,26 +191,79 @@ nakhoda/
 
 ## Environment Variables
 
-### Root `.env.example`
-```
-ENVIRONMENT=development|production
-
-# Wheel FE
-VITE_API_URL=http://localhost:3000
-VITE_WS_URL=ws://localhost:8080
-
-# Wheel BE
-DB_URL=postgres://user:pass@localhost:5432/nakhoda
-REDIS_URL=redis://localhost:6379
-RUDDER_TOKENS=token_rudder_1,token_rudder_2
-JWT_SECRET=your-secret-key
+### Root `.env` (Unified Configuration)
+```bash
+# ======================
+# APPLICATION
+# ======================
 NODE_ENV=development
 
-# Rudder
-WHEEL_URL=wss://10.10.1.1:443
-RUDDER_TOKEN=token_rudder_1
-RUDDER_ID=rudder_1
+# ======================
+# WHEEL-BE (Backend API)
+# ======================
+PORT=3000
+WS_PORT=8080
+
+# ======================
+# WHEEL-FE (Frontend)
+# ======================
+VITE_PORT=5173
+VITE_API_BASE_URL=http://localhost:3000
+VITE_WS_URL=ws://localhost:8080
+
+# ======================
+# DATABASE (PostgreSQL)
+# ======================
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=nakhoda
+DB_PASSWORD=nakhoda
+DB_NAME=nakhoda
+
+# ======================
+# REDIS (Cache)
+# ======================
+REDIS_HOST=localhost
+REDIS_PORT=6379
+
+# ======================
+# AUTHENTICATION
+# ======================
+JWT_SECRET=your-super-secret-jwt-key-change-in-production
+JWT_EXPIRES_IN=24h
+RUDDER_TOKENS=rudder_token_1,rudder_token_2
+
+# ======================
+# JOB SETTINGS
+# ======================
+JOB_RETENTION_DAYS=30
+JOB_TIMEOUT_MS=300000
+
+# ======================
+# CORS
+# ======================
+CORS_ORIGIN=http://localhost:5173
+
+# ======================
+# RATE LIMITING
+# ======================
+RATE_LIMIT_WINDOW_MS=60000
+RATE_LIMIT_MAX=100
 ```
+
+### Rudder `.env` (For standalone deployment on Docker hosts)
+```bash
+WHEEL_URL=wss://10.10.1.1:443
+RUDDER_TOKEN=rudder_token_1
+RUDDER_ID=rudder_1
+RUDDER_HOSTNAME=docker-host-1
+HEARTBEAT_INTERVAL_MS=30000
+RECONNECT_MAX_DELAY_MS=60000
+RUDDER_OFFLINE_THRESHOLD_MS=90000
+LOG_LEVEL=info
+```
+
+> **Note**: For development (in `dev-compose.yml`), rudder-1 uses environment variables from root `.env` with `RUDDER_*` prefixes.
 
 ---
 

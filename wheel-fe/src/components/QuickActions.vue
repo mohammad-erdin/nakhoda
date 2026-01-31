@@ -4,7 +4,7 @@
     <div class="actions">
       <a-button type="primary" @click="$router.push('/containers/create')">Create Container</a-button>
       <a-button @click="$router.push('/images')">Pull Image</a-button>
-      <a-button @click="$router.push('/rudders')">View Rudders</a-button>
+      <a-button @click="$router.push('/rudders')">View Server</a-button>
     </div>
   </div>
 </template>

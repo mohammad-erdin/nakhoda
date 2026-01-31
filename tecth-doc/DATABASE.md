@@ -2,23 +2,37 @@
 
 ## Quick Start (Local Dev)
 
-### 1. Start PostgreSQL + Redis
+### 1. Start All Services (PostgreSQL + Redis + Wheel BE + Wheel FE + Rudder-1)
 ```bash
-cd services/
-docker-compose up -d
+docker compose -f dev-compose.yml up -d
 ```
 
 This will:
 - Spin up PostgreSQL 16 on port 5432
 - Spin up Redis 7 on port 6379
+- Spin up Wheel BE (API + WebSocket) on ports 3000 & 8080
+- Spin up Wheel FE (Vue UI) on port 5173
+- Spin up Rudder-1 (Docker agent) connected to wheel-be
 - Auto-run `init.sql` to initialize schema + seed admin user
 
-### 2. Verify Services
+### 2. Verify All Services
 ```bash
-docker-compose ps
+docker compose -f dev-compose.yml ps
 ```
 
-### 3. Connect to PostgreSQL (optional)
+### 3. Check Rudder Connection
+```bash
+docker logs nakhoda-rudder-1
+```
+
+Expected output:
+```
+[INFO] Connecting to wheel-be at ws://wheel-be:8080
+[INFO] Rudder registered: rudder_1
+[INFO] Heartbeat sent
+```
+
+### 4. Connect to PostgreSQL (optional)
 ```bash
 docker exec -it nakhoda-postgres psql -U nakhoda -d nakhoda
 ```
@@ -77,11 +91,19 @@ Used for compliance + debugging.
 
 ## Environment Variables
 
-**wheel-be/.env**:
+**Root `.env`** (used by all services via `dev-compose.yml`):
 ```
-DB_URL=postgres://nakhoda:nakhoda@localhost:5432/nakhoda
-REDIS_URL=redis://localhost:6379
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=nakhoda
+DB_PASSWORD=nakhoda
+DB_NAME=nakhoda
+
+REDIS_HOST=localhost
+REDIS_PORT=6379
 ```
+
+> **Note**: When running inside Docker containers, `DB_HOST` and `REDIS_HOST` are automatically set to service names (`postgres` and `redis`) in the compose file.
 
 ---
 
@@ -90,11 +112,11 @@ REDIS_URL=redis://localhost:6379
 ### PostgreSQL fails to start
 ```bash
 # Check logs
-docker-compose logs postgres
+docker compose -f dev-compose.yml logs postgres
 
 # Rebuild
-docker-compose down -v
-docker-compose up -d
+docker compose -f dev-compose.yml down -v
+docker compose -f dev-compose.yml up -d
 ```
 
 ### Cannot connect to database
@@ -109,10 +131,10 @@ docker exec nakhoda-postgres pg_isready -U nakhoda -d nakhoda
 ### Want to reset schema?
 ```bash
 # Delete volumes (⚠️ data loss)
-docker-compose down -v
+docker compose -f dev-compose.yml down -v
 
 # Recreate
-docker-compose up -d
+docker compose -f dev-compose.yml up -d
 ```
 
 ---

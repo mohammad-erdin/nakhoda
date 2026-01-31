@@ -1,18 +1,8 @@
 <template>
   <div class="page">
     <div class="page__title">Rudder Detail</div>
-    <div v-if="rudder" class="card">
-      <div class="flex flex--between">
-        <div>
-          <div class="card__title">{{ rudder.hostname }}</div>
-          <div class="muted">{{ rudder.dockerVersion }}</div>
-        </div>
-        <StatusTag :status="rudder.status" />
-      </div>
-      <div class="detail">
-        <div><strong>ID:</strong> {{ rudder.id }}</div>
-        <div><strong>Last heartbeat:</strong> {{ formatDate(rudder.lastHeartbeat) }}</div>
-      </div>
+    <div v-if="rudder">
+      <RudderStatusCard :rudder="rudder" />
     </div>
     <EmptyState v-else message="Rudder not found." />
   </div>
@@ -25,6 +15,7 @@ import { useRudders } from '@/stores/rudders';
 import StatusTag from '@/components/StatusTag.vue';
 import EmptyState from '@/components/EmptyState.vue';
 import { formatDate } from '@/utils/format';
+import RudderStatusCard from '@/components/RudderStatusCard.vue';
 
 const route = useRoute();
 const rudders = useRudders();
