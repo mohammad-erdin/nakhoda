@@ -48,6 +48,47 @@ body {
   color: var(--color-muted) !important;
 }
 
+/* Password Input Specific Styles */
+.ant-input-password {
+  display: flex;
+  width: 100%;
+}
+
+.ant-input-affix-wrapper {
+  background-color: var(--color-surface-alt) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text) !important;
+  padding: 0;
+}
+
+.ant-input-affix-wrapper:hover {
+  border-color: var(--color-primary) !important;
+}
+
+.ant-input-affix-wrapper:focus-within {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
+}
+
+.ant-input-affix-wrapper input {
+  background: transparent !important;
+  color: var(--color-text) !important;
+  padding: 6px 11px !important;
+}
+
+.ant-input-affix-wrapper input::placeholder {
+  color: var(--color-muted) !important;
+}
+
+.ant-input-password-icon {
+  color: var(--color-muted) !important;
+  cursor: pointer;
+}
+
+.ant-input-password-icon:hover {
+  color: var(--color-primary) !important;
+}
+
 .ant-input:hover,
 .ant-input-password input:hover {
   border-color: var(--color-primary) !important;

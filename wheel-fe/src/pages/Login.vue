@@ -1,8 +1,8 @@
 <template>
   <div class="login">
     <div class="login__card">
-      <h1>Welcome to Nakhoda</h1>
-      <p class="muted">Enter your credentials to continue.</p>
+      <h1>Ayay Captain !</h1>
+      <p class="muted">Enter your credentials please.</p>
 
       <a-form 
         layout="vertical" 
@@ -11,14 +11,12 @@
         @finishFailed="onFinishFailed"
       >
         <a-form-item 
-          label="Username" 
           name="username"
           :rules="[{ required: true, message: 'Username is required' }]"
         >
-          <a-input v-model:value="formData.username" placeholder="admin" />
+          <a-input v-model:value="formData.username" placeholder="Username" />
         </a-form-item>
         <a-form-item 
-          label="Password" 
           name="password"
           :rules="[{ required: true, message: 'Password is required' }]"
         >

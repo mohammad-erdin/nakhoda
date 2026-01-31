@@ -2,6 +2,9 @@ FROM node:20-alpine
 
 WORKDIR /app
 
+# Install build tools required for native modules (bcrypt, pg, etc)
+RUN apk add --no-cache python3 make g++ cairo-dev jpeg-dev pango-dev giflib-dev
+
 # Install pnpm
 RUN npm install -g pnpm
 
@@ -9,8 +12,8 @@ RUN npm install -g pnpm
 COPY wheel-be/package.json ./
 COPY shared/package.json ../shared/
 
-# Install dependencies
-RUN pnpm install
+# Install dependencies with build scripts enabled
+RUN pnpm install --prod=false && npm rebuild bcrypt
 
 # Copy shared types
 COPY shared ../shared
@@ -23,4 +26,5 @@ COPY wheel-be/tsconfig.json ./
 EXPOSE 3000 8080
 
 # Start development server
+CMD ["pnpm", "run", "dev"]# Start development server
 CMD ["pnpm", "run", "dev"]
