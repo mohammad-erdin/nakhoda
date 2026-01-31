@@ -88,6 +88,6 @@ watch(() => ui.theme, () => {
 
 .content {
   padding: 24px;
-  background: #0b1220;
+  background: var(--color-bg);
 }
 </style>

@@ -78,7 +78,7 @@ body {
 }
 
 .ant-layout-content {
-  background: #0b1220 !important;
+  background: var(--color-bg) !important;
 }
 
 .ant-menu {
