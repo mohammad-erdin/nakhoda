@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { onMounted, watch } from 'vue';
 import { useUI } from '@/stores/ui';
 import SidebarNav from '@/components/SidebarNav.vue';
 import TopBar from '@/components/TopBar.vue';
@@ -32,8 +32,19 @@ import { useWebSocket } from '@/composables/useWebSocket';
 const ui = useUI();
 const { connect } = useWebSocket();
 
+// Apply theme on mount
+const applyTheme = () => {
+  document.documentElement.setAttribute('data-theme', ui.theme);
+};
+
 onMounted(() => {
+  applyTheme();
   connect();
+});
+
+// Watch for theme changes
+watch(() => ui.theme, () => {
+  applyTheme();
 });
 </script>
 

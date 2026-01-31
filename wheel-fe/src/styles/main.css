@@ -11,9 +11,10 @@ html, body {
 
 body {
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #0b1220;
+  background: var(--color-bg);
   color: var(--color-text);
   margin: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #app {
@@ -206,6 +207,15 @@ body {
   border-radius: 12px;
   padding: 16px;
   color: var(--color-text);
+  transition: box-shadow 0.3s ease;
+}
+
+:root[data-theme="light"] .card {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+:root[data-theme="light"] .card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .card__title {
@@ -220,6 +230,11 @@ body {
   border-radius: 12px;
   padding: 16px;
   color: var(--color-text);
+  transition: box-shadow 0.3s ease;
+}
+
+:root[data-theme="light"] .stat-card {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .stat-card__label {

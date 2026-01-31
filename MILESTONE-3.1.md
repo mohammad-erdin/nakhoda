@@ -15,10 +15,13 @@
 - **Images**: Fixed response parsing in getImages()
 - **Verified**: All stores now handle `{ items: [] }` and `[]` responses
 
-### 2. Fix Theme/Settings Functionality 
-- Settings page theme toggle structure exists
-- UI store has setTheme() method
-- May need CSS variable application on theme change
+### 2. Fix Theme/Settings Functionality ✅
+- Moved theme toggle from Settings page to TopBar header
+- Added sun/moon icon toggle (ri-sun-line / ri-moon-line)
+- Toggle button positioned before username in top-right panel
+- Added smooth rotate animation on hover
+- Color changes to primary on hover
+- Connected to UI store setTheme() method
 
 ### 3. Debug API Response Structure ✅ (Partial)
 - Backend containers returns: `{ items, page, limit, total, totalPages }`
