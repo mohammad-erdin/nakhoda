@@ -11,7 +11,6 @@
             style="width: 150px"
             placeholder="All statuses"
             allowClear
-            @change="handleFilterChange"
           >
             <a-select-option value="pending">Pending</a-select-option>
             <a-select-option value="running">Running</a-select-option>
@@ -25,7 +24,6 @@
             style="width: 200px"
             placeholder="Rudder ID"
             allowClear
-            @change="handleFilterChange"
           />
         </a-form-item>
         <a-form-item label="Days">
@@ -35,7 +33,6 @@
             :max="90"
             style="width: 100px"
             placeholder="7"
-            @change="handleFilterChange"
           />
         </a-form-item>
         <a-form-item>
@@ -130,10 +127,6 @@ const pagination = computed(() => ({
   showTotal: (total: number) => `Total ${total} jobs`,
 }));
 
-const handleFilterChange = () => {
-  // Auto-apply filters on change if needed
-};
-
 const applyFilters = async () => {
   currentPage.value = 1;
   await loadJobs();
@@ -176,10 +169,12 @@ const loadJobs = async () => {
     if (!response.ok) throw new Error('Failed to fetch jobs');
 
     const data = await response.json();
-    jobs.items = data.items || [];
-    jobs.total = data.total || 0;
+    jobs.items = data?.items || [];
+    jobs.total = data?.total || 0;
   } catch (err) {
     console.error('Error loading jobs:', err);
+    jobs.items = [];
+    jobs.total = 0;
   } finally {
     jobs.loading = false;
   }

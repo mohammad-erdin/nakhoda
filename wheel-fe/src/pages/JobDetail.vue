@@ -91,7 +91,7 @@
           <div v-for="log in job.logs" :key="log.id" class="log-entry">
             <span class="log-entry__time">{{ formatTime(log.createdAt) }}</span>
             <a-tag :color="getLogLevelColor(log.level)" class="log-entry__level">
-              {{ log.level.toUpperCase() }}
+              {{ log.level?.toUpperCase() ?? 'INFO' }}
             </a-tag>
             <span class="log-entry__message">{{ log.message }}</span>
           </div>
