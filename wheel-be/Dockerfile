@@ -26,5 +26,4 @@ COPY wheel-be/tsconfig.json ./
 EXPOSE 3000 8080
 
 # Start development server
-CMD ["pnpm", "run", "dev"]# Start development server
-CMD ["pnpm", "run", "dev"]
+CMD ["pnpm", "run", "dev"] 

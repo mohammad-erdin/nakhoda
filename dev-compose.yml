@@ -8,7 +8,7 @@ services:
       POSTGRES_DB: ${DB_NAME:-nakhoda}
       POSTGRES_INITDB_ARGS: "--encoding=UTF8"
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
     volumes:
       - ./postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql
       - postgres_data:/var/lib/postgresql/data
@@ -26,7 +26,7 @@ services:
     container_name: nakhoda-redis
     command: redis-server --appendonly yes
     ports:
-      - "${REDIS_PORT:-6379}:6379"
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
     volumes:
       - redis_data:/data
     healthcheck:
@@ -63,8 +63,8 @@ services:
       RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS:-60000}
       RATE_LIMIT_MAX: ${RATE_LIMIT_MAX:-100}
     ports:
-      - "${PORT:-3000}:3000"
-      - "${WS_PORT:-8080}:8080"
+      - "127.0.0.1:${PORT:-3000}:3000"
+      - "127.0.0.1:${WS_PORT:-8080}:8080"
     volumes:
       - ./wheel-be/src:/app/src
       - ./shared:/app/shared
@@ -88,7 +88,7 @@ services:
       VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:3000}
       VITE_WS_URL: ${VITE_WS_URL:-ws://localhost:8080}
     ports:
-      - "${VITE_PORT:-5173}:5173"
+      - "127.0.0.1:${VITE_PORT:-5173}:5173"
     volumes:
       - ./wheel-fe/src:/app/src
       - ./shared:/app/shared
