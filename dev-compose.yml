@@ -64,7 +64,6 @@ services:
       RATE_LIMIT_MAX: ${RATE_LIMIT_MAX:-100}
     ports:
       - "0.0.0.0:${PORT:-3000}:3000"
-      - "0.0.0.0:${WS_PORT:-8080}:8080"
     volumes:
       - ./wheel-be/src:/app/src
       - ./shared:/app/shared
@@ -86,7 +85,7 @@ services:
     container_name: nakhoda-wheel-fe
     environment:
       VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:3000}
-      VITE_WS_URL: ${VITE_WS_URL:-ws://localhost:8080}
+      VITE_WS_URL: ${VITE_WS_URL:-ws://localhost:3000}
     ports:
       - "0.0.0.0:${VITE_PORT:-5173}:5173"
     volumes:
@@ -105,7 +104,7 @@ services:
       dockerfile: rudder/Dockerfile.dev
     container_name: nakhoda-rudder-1
     environment:
-      WHEEL_URL: ${RUDDER_WHEEL_URL:-ws://wheel-be:8080}
+      WHEEL_URL: ${RUDDER_WHEEL_URL:-ws://wheel-be:3000}
       RUDDER_ID: ${RUDDER_1_ID:-rudder_1}
       RUDDER_TOKEN: ${RUDDER_1_TOKEN:-rudder_token_1}
       RUDDER_HOSTNAME: ${RUDDER_1_HOSTNAME:-rudder-1}
