@@ -114,7 +114,9 @@ export async function updateStatus(
 
 export async function cleanupOld(retentionDays: number): Promise<number> {
   const result = await query(
-    `DELETE FROM jobs WHERE created_at < NOW() - INTERVAL '1 day' * $1`,
+    `DELETE FROM jobs 
+     WHERE created_at < NOW() - INTERVAL '1 day' * $1 
+     AND status IN ('done', 'failed')`,
     [retentionDays]
   );
   return result.rowCount || 0;

@@ -1,6 +1,7 @@
 import * as JobService from './JobService.js';
 import * as RudderService from './RudderService.js';
 import { logger } from '../utils/logger.js';
+import { dispatchJob } from '../websocket/index.js';
 
 const JOB_ACTIONS = {
   VOLUME_CREATE: 'volume.create',
@@ -35,9 +36,12 @@ export async function createVolume(input: CreateVolumeInput): Promise<VolumeActi
 
   logger.info('Volume create job created', { jobId: job.id, name: input.name, rudderId: input.rudderId });
 
+  // Dispatch job to rudder
+  await dispatchJob(input.rudderId, job.id, JOB_ACTIONS.VOLUME_CREATE, job.params);
+
   return {
     jobId: job.id,
-    status: job.status,
+    status: 'running',
   };
 }
 
@@ -56,9 +60,12 @@ export async function deleteVolume(input: DeleteVolumeInput): Promise<VolumeActi
     params: { volumeId: input.volumeId, force: input.force },
   });
 
+  // Dispatch job to rudder
+  await dispatchJob(input.rudderId, job.id, JOB_ACTIONS.VOLUME_DELETE, job.params);
+
   return {
     jobId: job.id,
-    status: job.status,
+    status: 'running',
     message: 'Volume deletion queued',
   };
 }

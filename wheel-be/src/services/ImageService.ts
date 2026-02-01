@@ -1,6 +1,7 @@
 import * as JobService from './JobService.js';
 import * as RudderService from './RudderService.js';
 import { logger } from '../utils/logger.js';
+import { dispatchJob } from '../websocket/index.js';
 
 const JOB_ACTIONS = {
   IMAGE_PULL: 'image.pull',
@@ -29,9 +30,12 @@ export async function pullImage(input: PullImageInput): Promise<ImageActionResul
 
   logger.info('Image pull job created', { jobId: job.id, repo: input.repo, rudderId: input.rudderId });
 
+  // Dispatch job to rudder
+  await dispatchJob(input.rudderId, job.id, JOB_ACTIONS.IMAGE_PULL, job.params);
+
   return {
     jobId: job.id,
-    status: job.status,
+    status: 'running',
     message: 'Pulling image...',
   };
 }
@@ -51,9 +55,12 @@ export async function deleteImage(input: DeleteImageInput): Promise<ImageActionR
     params: { imageId: input.imageId, force: input.force },
   });
 
+  // Dispatch job to rudder
+  await dispatchJob(input.rudderId, job.id, JOB_ACTIONS.IMAGE_DELETE, job.params);
+
   return {
     jobId: job.id,
-    status: job.status,
+    status: 'running',
     message: 'Image deletion queued',
   };
 }

@@ -1,6 +1,7 @@
 import * as JobService from './JobService.js';
 import * as RudderService from './RudderService.js';
 import { logger } from '../utils/logger.js';
+import { dispatchJob } from '../websocket/index.js';
 
 const JOB_ACTIONS = {
   CONTAINER_CREATE: 'container.create',
@@ -44,9 +45,12 @@ export async function createContainer(input: CreateContainerInput): Promise<Cont
 
   logger.info('Container create job created', { jobId: job.id, rudderId: input.rudderId });
 
+  // Dispatch job to rudder
+  await dispatchJob(input.rudderId, job.id, JOB_ACTIONS.CONTAINER_CREATE, job.params);
+
   return {
     jobId: job.id,
-    status: job.status,
+    status: 'running',
   };
 }
 
@@ -64,7 +68,10 @@ export async function startContainer(input: ContainerCommandInput): Promise<Cont
     params: { containerId: input.containerId },
   });
 
-  return { jobId: job.id, status: job.status };
+  // Dispatch job to rudder
+  await dispatchJob(input.rudderId, job.id, JOB_ACTIONS.CONTAINER_START, job.params);
+
+  return { jobId: job.id, status: 'running' };
 }
 
 export async function stopContainer(input: ContainerCommandInput): Promise<ContainerActionResult> {
@@ -76,7 +83,10 @@ export async function stopContainer(input: ContainerCommandInput): Promise<Conta
     params: { containerId: input.containerId },
   });
 
-  return { jobId: job.id, status: job.status };
+  // Dispatch job to rudder
+  await dispatchJob(input.rudderId, job.id, JOB_ACTIONS.CONTAINER_STOP, job.params);
+
+  return { jobId: job.id, status: 'running' };
 }
 
 export async function restartContainer(input: ContainerCommandInput): Promise<ContainerActionResult> {
@@ -88,7 +98,10 @@ export async function restartContainer(input: ContainerCommandInput): Promise<Co
     params: { containerId: input.containerId },
   });
 
-  return { jobId: job.id, status: job.status };
+  // Dispatch job to rudder
+  await dispatchJob(input.rudderId, job.id, JOB_ACTIONS.CONTAINER_RESTART, job.params);
+
+  return { jobId: job.id, status: 'running' };
 }
 
 export async function deleteContainer(
@@ -102,5 +115,8 @@ export async function deleteContainer(
     params: { containerId: input.containerId, force: input.force },
   });
 
-  return { jobId: job.id, status: job.status };
+  // Dispatch job to rudder
+  await dispatchJob(input.rudderId, job.id, JOB_ACTIONS.CONTAINER_DELETE, job.params);
+
+  return { jobId: job.id, status: 'running' };
 }
