@@ -6,7 +6,7 @@ import { useJobs } from '@/stores/jobs';
 import { useContainers } from '@/stores/containers';
 
 const WS_URL = import.meta.env.VITE_WS_URL || '';
-
+console.info(WS_URL);
 export function useWebSocket() {
   const socket = ref<Socket | null>(null);
   const isConnected = ref(false);

@@ -2,8 +2,8 @@
   <div class="page">
     <div class="page__title">Create Container</div>
     <a-form layout="vertical" @finish="handleSubmit" @submit.prevent="handleSubmit" class="card">
-      <a-form-item label="Rudder ID">
-        <a-input v-model:value="form.rudder_id" placeholder="rudder-1" />
+      <a-form-item label="Agent ID">
+        <a-input v-model:value="form.rudder_id" placeholder="name" />
       </a-form-item>
       <a-form-item label="Image">
         <a-input v-model:value="form.image" placeholder="nginx:latest" />

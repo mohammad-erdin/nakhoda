@@ -27,7 +27,7 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
   const method = options.method || 'GET';
   const body = options.body ? JSON.stringify(options.body) : undefined;
 
-  console.log(`[API] ${method} ${url}`, body ? JSON.parse(body) : '');
+  // console.log(`[API] ${method} ${url}`, body ? JSON.parse(body) : '');
 
   const response = await fetch(url, {
     method,
@@ -35,16 +35,16 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
     body,
   });
 
-  console.log(`[API] Response: ${response.status} ${response.statusText}`);
+  // console.log(`[API] Response: ${response.status} ${response.statusText}`);
 
   if (!response.ok) {
     const message = await response.text();
-    console.error(`[API] Error: ${message}`);
+    // console.error(`[API] Error: ${message}`);
     throw new Error(message || 'Request failed');
   }
 
   const data = await response.json() as Promise<T>;
-  console.log(`[API] Data:`, data);
+  // console.log(`[API] Data:`, data);
   return data;
 }
 

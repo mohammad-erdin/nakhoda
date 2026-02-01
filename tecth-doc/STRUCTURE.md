@@ -209,7 +209,7 @@ WS_PORT=8080
 # ======================
 VITE_PORT=5173
 VITE_API_BASE_URL=http://localhost:3000
-VITE_WS_URL=ws://localhost:8080
+VITE_WS_URL=ws://localhost:8081
 
 # ======================
 # DATABASE (PostgreSQL)

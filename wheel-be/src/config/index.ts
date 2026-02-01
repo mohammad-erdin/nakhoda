@@ -60,6 +60,12 @@ export const config = {
     windowMs: getEnvNumber('RATE_LIMIT_WINDOW_MS', 60000),
     max: getEnvNumber('RATE_LIMIT_MAX', 100),
   },
+
+  // Logging format: 'string' (human-friendly) or 'json' (structured logs)
+  // Defaults to 'json' in production and 'string' in development
+  logFormat: getEnv('LOG_FORMAT', ''),
 } as const;
+
+console.info(config);
 
 export type Config = typeof config;

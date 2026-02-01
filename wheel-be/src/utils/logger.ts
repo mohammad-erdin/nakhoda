@@ -1,5 +1,7 @@
 import { config } from '../config/index.js';
 
+export type LogFormat = 'string' | 'json' | 'detailed';
+
 type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 interface LogEntry {
@@ -27,18 +29,52 @@ function shouldLog(level: LogLevel): boolean {
 }
 
 function output(entry: LogEntry): void {
-  if (config.nodeEnv === 'development') {
-    const color = {
-      debug: '\x1b[36m',
-      info: '\x1b[32m',
-      warn: '\x1b[33m',
-      error: '\x1b[31m',
-    }[entry.level];
-    const reset = '\x1b[0m';
-    console.log(`${color}[${entry.level.toUpperCase()}]${reset} ${entry.message}`, entry);
-  } else {
-    console.log(JSON.stringify(entry));
+  const format = (config as any).logFormat as LogFormat | undefined;
+  const effectiveFormat: LogFormat = format || 'string';
+  switch (effectiveFormat) {
+    case 'json':
+      console.log(JSON.stringify(entry));
+      break;
+    case 'string':
+        const color = {
+          debug: '\x1b[36m',
+          info: '\x1b[32m',
+          warn: '\x1b[33m',
+          error: '\x1b[31m',
+        }[entry.level];
+        const reset = '\x1b[0m';
+        console.log(`${color}[${entry.level.toUpperCase()}]${reset} ${entry.message}. ${entry.text??''}`);
+      break;
+    case 'detailed':
+      console.info(entry);
+      break;
   }
+
+  // Previous implementation before switch-case
+
+  // if (effectiveFormat === 'json') {
+  //   // Structured JSON output
+  //   console.log(JSON.stringify(entry));
+  //   return;
+  // }
+
+  // // Human-readable string output
+  // if (config.nodeEnv === 'development') {
+  //   const color = {
+  //     debug: '\x1b[36m',
+  //     info: '\x1b[32m',
+  //     warn: '\x1b[33m',
+  //     error: '\x1b[31m',
+  //   }[entry.level];
+  //   const reset = '\x1b[0m';
+  //   // Colorful message + structured meta after
+  //   console.log(`${color}[${entry.level.toUpperCase()}]${reset} ${entry.message}`, entry);
+  // } else {
+  //   // Plain textual output for production string mode
+  //   const { timestamp, level, service, message, ...rest } = entry;
+  //   const metaStr = Object.keys(rest).length ? ` ${JSON.stringify(rest)}` : '';
+  //   console.log(`[${entry.level.toUpperCase()}] ${entry.message}${metaStr}`);
+  // }
 }
 
 export const logger = {

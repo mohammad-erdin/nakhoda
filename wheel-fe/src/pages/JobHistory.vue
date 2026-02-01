@@ -18,32 +18,30 @@
             <a-select-option value="failed">Failed</a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item label="Rudder">
-          <a-input
-            v-model:value="filters.rudderId"
-            style="width: 200px"
-            placeholder="Rudder ID"
+        <a-form-item label="Server">
+          <a-select
+            v-model:value="filters.serverId"
+            style="width: 220px"
+            placeholder="Server"
+            :loading="servers.loading"
             allowClear
+          >
+            <a-select-option
+              v-for="r in servers.rudders"
+              :key="r.id"
+              :value="r.id"
+            >{{ r.hostname || r.id }}</a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item label="Date Range">
+          <a-range-picker
+            v-model:value="filters.range"
+            style="width: 260px"
+            :allow-empty="[false, false]"
+            value-format="YYYY-MM-DD"
+            :disabled-date="disableFutureDates"
+            format="YYYY-MM-DD"
           />
-        </a-form-item>
-        <a-form-item label="Days">
-          <a-input-number
-            v-model:value="filters.days"
-            :min="1"
-            :max="90"
-            style="width: 100px"
-            placeholder="7"
-          />
-        </a-form-item>
-        <a-form-item>
-          <a-button type="primary" @click="applyFilters">
-            <i class="ri-search-line"></i> Search
-          </a-button>
-        </a-form-item>
-        <a-form-item>
-          <a-button @click="resetFilters">
-            <i class="ri-refresh-line"></i> Reset
-          </a-button>
         </a-form-item>
       </a-form>
     </a-card>
@@ -85,19 +83,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed } from 'vue';
+import { ref, reactive, onMounted, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useJobs } from '@/stores/jobs';
+import { useRudders } from '@/stores/rudders';
 import StatusTag from '@/components/StatusTag.vue';
 import { formatDate, formatDuration } from '@/utils/format';
 
 const router = useRouter();
 const jobsStore = useJobs();
 
+// default date range: yesterday - today
+const _yesterday = new Date();
+_yesterday.setDate(_yesterday.getDate() - 1);
+const _today = new Date();
+
 const filters = reactive({
   status: undefined as string | undefined,
-  rudderId: undefined as string | undefined,
-  days: undefined as number | undefined,
+  serverId: undefined as string | undefined,
+  range: [
+    _yesterday.toISOString().slice(0, 10),
+    _today.toISOString().slice(0, 10),
+  ] as string[],
 });
 
 const currentPage = ref(1);
@@ -112,7 +119,7 @@ const jobs = reactive({
 const columns = [
   { title: 'Job ID', dataIndex: 'id', key: 'id', width: 120 },
   { title: 'Action', dataIndex: 'action', key: 'action', width: 200 },
-  { title: 'Rudder', dataIndex: 'rudderId', key: 'rudderId', width: 150 },
+  { title: 'Server', dataIndex: 'rudderId', key: 'rudderId', width: 150 },
   { title: 'Status', dataIndex: 'status', key: 'status', width: 100 },
   { title: 'Created', dataIndex: 'createdAt', key: 'createdAt', width: 180 },
   { title: 'Completed', dataIndex: 'completedAt', key: 'completedAt', width: 180 },
@@ -127,27 +134,15 @@ const pagination = computed(() => ({
   showTotal: (total: number) => `Total ${total} jobs`,
 }));
 
-const applyFilters = async () => {
-  currentPage.value = 1;
-  await loadJobs();
-};
+const servers = useRudders();
 
-const resetFilters = async () => {
-  filters.status = undefined;
-  filters.rudderId = undefined;
-  filters.days = undefined;
-  currentPage.value = 1;
-  await loadJobs();
-};
-
-const handleTableChange = (pag: any) => {
-  currentPage.value = pag.current;
-  pageSize.value = pag.pageSize;
-  loadJobs();
-};
-
-const handleRowClick = (record: any) => {
-  router.push(`/jobs/${record.id}`);
+const disableFutureDates = (current: any) => {
+  // Disable dates in the future
+  try {
+    return new Date(current) > new Date();
+  } catch (e) {
+    return false;
+  }
 };
 
 const loadJobs = async () => {
@@ -155,8 +150,12 @@ const loadJobs = async () => {
   try {
     const params = new URLSearchParams();
     if (filters.status) params.append('status', filters.status);
-    if (filters.rudderId) params.append('rudder_id', filters.rudderId);
-    if (filters.days) params.append('days', filters.days.toString());
+    // keep backend param name for compatibility
+    if (filters.serverId) params.append('rudder_id', filters.serverId);
+    if (filters.range && filters.range.length === 2) {
+      params.append('from', filters.range[0]);
+      params.append('to', filters.range[1]);
+    }
     params.append('page', currentPage.value.toString());
     params.append('limit', pageSize.value.toString());
 
@@ -180,14 +179,54 @@ const loadJobs = async () => {
   }
 };
 
-onMounted(() => {
+
+// watch filters and trigger reload in realtime (reset to first page)
+watch(
+  () => [filters.status, filters.serverId, filters.range],
+  async () => {
+    currentPage.value = 1;
+    await loadJobs();
+  },
+  { immediate: true }
+);
+
+// sync selected rudder in store when server changes
+watch(
+  () => filters.serverId,
+  (val) => {
+    servers.setSelectedRudder(val || null);
+  }
+);
+
+const handleTableChange = (pag: any) => {
+  currentPage.value = pag.current;
+  pageSize.value = pag.pageSize;
   loadJobs();
+};
+
+const handleRowClick = (record: any) => {
+  router.push(`/jobs/${record.id}`);
+};
+
+
+onMounted(async () => {
+  await servers.getRudders();
+  if (servers.rudders.length && !filters.serverId) {
+    // prefer an online server if available
+    const preferred = servers.onlineRudders.length ? servers.onlineRudders[0] : servers.rudders[0];
+    filters.serverId = preferred.id;
+    servers.setSelectedRudder(filters.serverId);
+  }
+  // loadJobs will be triggered by the watch above (immediate)
 });
 </script>
 
 <style scoped>
 .filters-card {
   margin-bottom: 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
 }
 
 .filters-form {
@@ -196,8 +235,28 @@ onMounted(() => {
   gap: 8px;
 }
 
+/* Make form labels and inputs dark-friendly */
+.filters-card .ant-form-item-label label {
+  color: var(--color-muted);
+}
+
+:deep(.filters-card .ant-select .ant-select-selector),
+:deep(.filters-card .ant-input),
+:deep(.filters-card .ant-input-number-input) {
+  background: var(--color-surface-alt) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+}
+
 .jobs-table {
-  background: white;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+}
+
+:deep(.ant-table-thead > tr > th) {
+  background: var(--color-surface-alt) !important;
+  color: var(--color-muted) !important;
+  border-bottom: 1px solid var(--color-border) !important;
 }
 
 :deep(.clickable-row) {
@@ -206,7 +265,7 @@ onMounted(() => {
 }
 
 :deep(.clickable-row:hover) {
-  background-color: #f5f5f5 !important;
+  background-color: rgba(255,255,255,0.03) !important;
 }
 
 .job-id,

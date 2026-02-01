@@ -4,14 +4,54 @@ import { authMiddleware } from '../middleware/auth.js';
 import { createContainerSchema, containerFilterSchema, paginationSchema } from '../utils/validation.js';
 import * as cache from '../cache/index.js';
 import { BadRequestError } from '../utils/errors.js';
+import { getIO } from '../websocket/index.js';
 
 const router = Router();
+
+// Helper: ask a rudder for its containers and wait briefly for cache to populate
+async function requestContainersFromRudder(rudderId: string, timeout = 2000): Promise<unknown[] | null> {
+  // If there is already containers in cache, return immediately
+  const existing = await cache.getRudderContainers(rudderId);
+  if (existing) return existing;
+
+  // Emit request to specific rudder socket
+  const io = getIO();
+  if (!io) return null;
+
+  // Find socket id from session
+  const session = await cache.getRudderSession(rudderId);
+  const socketId = session?.socketId;
+  if (!socketId) return null;
+
+  try {
+    const socket = io.sockets.sockets.get(socketId);
+    if (!socket) return null;
+
+    socket.emit('wheel:containers_request', { rudder_id: rudderId });
+
+    // Poll cache for up to timeout ms
+    const start = Date.now();
+    while (Date.now() - start < timeout) {
+      const data = await cache.getRudderContainers(rudderId);
+      if (data) return data;
+      await new Promise((r) => setTimeout(r, 100));
+    }
+  } catch (err) {
+    // ignore
+  }
+
+  return null;
+}
 
 // List all containers
 router.get('/', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const filters = containerFilterSchema.parse(req.query);
     const pagination = paginationSchema.parse(req.query);
+    // console.info("masuk",[
+    //   filters,
+    //   pagination
+    // ]);
     
     // Get containers from all rudders cache
     const sessions = await cache.getAllRudderSessions();
@@ -19,8 +59,16 @@ router.get('/', authMiddleware, async (req: Request, res: Response, next: NextFu
 
     for (const session of sessions) {
       if (filters.rudder_id && session.id !== filters.rudder_id) continue;
-      
-      const containers = await cache.getRudderContainers(session.id);
+
+      // try to read from cache first
+      let containers = await cache.getRudderContainers(session.id);
+
+      // if cache missing and rudder is online, request containers and wait briefly
+      if (!containers && session.status === 'online') {
+        const data = await requestContainersFromRudder(session.id, 2000);
+        if (data) containers = data;
+      }
+
       if (containers) {
         allContainers.push(...containers);
       }

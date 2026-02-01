@@ -8,7 +8,7 @@ export const useContainers = defineStore('containers', () => {
   const containers = ref<Container[]>([]);
   const loading = ref(false);
   const error = ref<string | null>(null);
-  const filters = ref({ status: '', rudder: '', image: '' });
+  const filters = ref({ status: '', rudder: '', searchText: '' });
   const page = ref(1);
   const pageSize = 50;
 
@@ -16,7 +16,7 @@ export const useContainers = defineStore('containers', () => {
     return containers.value.filter((c: Container) => {
       if (filters.value.status && c.status !== filters.value.status) return false;
       if (filters.value.rudder && c.rudderId !== filters.value.rudder) return false;
-      if (filters.value.image && !c.image.includes(filters.value.image)) return false;
+      if (filters.value.searchText && !c.image.includes(filters.value.searchText)) return false;
       return true;
     });
   });
@@ -62,6 +62,24 @@ export const useContainers = defineStore('containers', () => {
     containers.value = containers.value.filter((c: Container) => c.id !== id);
   };
 
+  const stopSelected = async (rudderId: string, ids: string[]) => {
+    const results = [] as Array<{ jobId: string; status: string }>;
+    for (const id of ids) {
+      const res = await apiPost<{ jobId: string; status: string }>(API_ENDPOINTS.CONTAINERS.STOP(id), { rudder_id: rudderId });
+      results.push(res);
+    }
+    return results;
+  };
+
+  const destroySelected = async (rudderId: string, ids: string[]) => {
+    const results = [] as Array<{ jobId: string; status: string }>;
+    for (const id of ids) {
+      const res = await apiDelete(API_ENDPOINTS.CONTAINERS.DELETE(id) + `?rudder_id=${encodeURIComponent(rudderId)}`);
+      results.push(res as any);
+    }
+    return results;
+  };
+
   const updateContainerStatus = (
     containerId: string,
     status: 'running' | 'stopped' | 'exited'
@@ -97,6 +115,8 @@ export const useContainers = defineStore('containers', () => {
     getContainers,
     createContainer,
     deleteContainer,
+    stopSelected,
+    destroySelected,
     updateContainerStatus,
     updateContainerList,
     setFilters,
