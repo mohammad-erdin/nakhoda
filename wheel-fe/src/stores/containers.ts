@@ -47,8 +47,9 @@ export const useContainers = defineStore('containers', () => {
 
   const createContainer = async (opts: Record<string, unknown>) => {
     try {
-      const response = await apiPost<Container>(API_ENDPOINTS.CONTAINERS.CREATE, opts);
-      containers.value.push(response);
+      const response = await apiPost<{ jobId: string; status: string }>(API_ENDPOINTS.CONTAINERS.CREATE, opts);
+      // Creation is asynchronous. Backend returns a job (jobId,status).
+      // Do not add a container to the list here; wait for job completion to update cache.
       return response;
     } catch (err) {
       error.value = (err as Error).message;

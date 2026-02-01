@@ -16,11 +16,17 @@ export function setupWheelEventHandlers(
 
     try {
       const result = await jobHandler.executeJob(payload);
-      client.emit('rudder:job_complete', result);
+      // Convert jobId to job_id for wheel-be compatibility
+      client.emit('rudder:job_complete', {
+        job_id: result.jobId,
+        status: result.status,
+        result: result.result,
+        error: result.error,
+      });
     } catch (error) {
       logger.error(`Job execution error: ${(error as Error).message}`, { jobId: payload.job_id });
       client.emit('rudder:job_complete', {
-        jobId: payload.job_id,
+        job_id: payload.job_id,
         status: 'failed',
         error: (error as Error).message,
       });

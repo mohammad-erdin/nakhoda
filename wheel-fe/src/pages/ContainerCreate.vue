@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <div class="page__title">Create Container</div>
-    <a-form layout="vertical" @finish="handleSubmit" class="card">
+    <a-form layout="vertical" @finish="handleSubmit" @submit.prevent="handleSubmit" class="card">
       <a-form-item label="Rudder ID">
         <a-input v-model:value="form.rudder_id" placeholder="rudder-1" />
       </a-form-item>
@@ -12,10 +12,10 @@
         <a-input v-model:value="form.name" placeholder="web" />
       </a-form-item>
       <a-form-item label="Ports (JSON)">
-        <a-textarea v-model:value="portsRaw" rows="3" placeholder='{"80": 8080}' />
+        <a-textarea v-model:value="portsRaw" :rows="3" placeholder='{"80": 8080}' />
       </a-form-item>
       <a-form-item label="Environment Variables (JSON)">
-        <a-textarea v-model:value="envRaw" rows="3" placeholder='{"NODE_ENV": "production"}' />
+        <a-textarea v-model:value="envRaw" :rows="3" placeholder='{"NODE_ENV": "production"}' />
       </a-form-item>
       <a-button type="primary" html-type="submit" :loading="containers.loading">Create</a-button>
     </a-form>
@@ -41,6 +41,14 @@ const portsRaw = ref('{}');
 const envRaw = ref('{}');
 
 const handleSubmit = async () => {
+  console.log('[UI] handleSubmit called', { form: { ...form } });
+
+  // Basic client-side validation to give faster feedback
+  if (!form.rudder_id || !form.image || !form.name) {
+    message.error('Rudder ID, Image and Container Name are required');
+    return;
+  }
+
   try {
     const ports = JSON.parse(portsRaw.value || '{}');
     const env = JSON.parse(envRaw.value || '{}');
@@ -50,8 +58,9 @@ const handleSubmit = async () => {
       env,
     };
 
-    const created = await containers.createContainer(payload);
-    router.push(`/containers/${created.id}`);
+    const result = await containers.createContainer(payload);
+    message.success('Container create job submitted');
+    router.push(`/jobs/${result.jobId}`);
   } catch (err) {
     message.error((err as Error).message || 'Invalid JSON input');
   }
