@@ -1,6 +1,6 @@
 <template>
-  <div class="empty">
-    <i class="ri-inbox-2-line"></i>
+  <div class="border-dashed border-[var(--color-border)] rounded-lg p-8 flex flex-col items-center gap-2 text-[var(--color-muted)]">
+    <i class="ri-inbox-2-line text-2xl"></i>
     <p>{{ message }}</p>
   </div>
 </template>
@@ -12,20 +12,3 @@ interface Props {
 
 defineProps<Props>();
 </script>
-
-<style scoped>
-.empty {
-  border: 1px dashed var(--color-border);
-  border-radius: 12px;
-  padding: 32px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  color: var(--color-muted);
-}
-
-.empty i {
-  font-size: 24px;
-}
-</style>

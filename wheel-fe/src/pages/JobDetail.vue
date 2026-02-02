@@ -176,68 +176,6 @@ onMounted(() => {
   loadJobDetail();
 });
 </script>
-
-<style scoped lang="scss">
-@import '@/styles/mixins';
-@import '@/styles/variables';
-
-.page {
-  &__header {
-    margin-bottom: $spacing-md;
-  }
-
-  &__loading,
-  &__error {
-    @include flex-center;
-    min-height: 400px;
-  }
-}
-
-.job-detail {
-  &__header {
-    @include flex-between;
-    align-items: flex-start;
-    margin-bottom: $spacing-lg;
-  }
-
-  &__title {
-    font-size: 24px;
-    font-weight: 600;
-    margin: 0 0 $spacing-sm 0;
-  }
-
-  &__id {
-    color: var(--color-muted);
-    font-family: monospace;
-    font-size: 14px;
-  }
-
-  &__actions {
-    display: flex;
-    gap: $spacing-sm;
-  }
-
-  &__card {
-    margin-bottom: $spacing-md;
-  }
-}
-
-.metadata {
-  @include grid-auto(250px);
-
-  &__item {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-xs;
-  }
-
-  &__label {
-    font-size: 12px;
-    color: var(--color-muted);
-    text-transform: uppercase;
-    font-weight: 500;
-  }
-
   &__value {
     font-size: 14px;
     color: var(--color-text);

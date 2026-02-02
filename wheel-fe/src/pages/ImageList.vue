@@ -1,7 +1,7 @@
 <template>
-  <div class="page">
-    <div class="flex flex--between">
-      <div class="page__title">Images</div>
+  <div class="page px-6 py-6">
+    <div class="flex flex--between items-center">
+      <div class="page__title text-2xl font-semibold mb-0">Images</div>
       <a-button type="primary" @click="showPullModal = true">Pull Image</a-button>
     </div>
 
@@ -85,20 +85,3 @@ watch(
   { immediate: true }
 );
 </script>
-
-<style scoped lang="scss">
-@import '@/styles/mixins';
-@import '@/styles/variables';
-
-.filters {
-  display: flex;
-  gap: 12px;
-  margin: $spacing-md 0;
-  align-items: center;
-  justify-content: flex-start;
-
-  &__spacer {
-    flex: 1;
-  }
-}
-</style>

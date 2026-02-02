@@ -1,10 +1,10 @@
 <template>
-  <div class="page">
-    <div class="page__title">Container Detail</div>
+  <div class="page px-6 py-6">
+    <div class="page__title text-2xl font-semibold mb-0">Container Detail</div>
     <div v-if="container" class="card">
       <div class="flex flex--between">
         <div>
-          <div class="card__title">{{ container.name }}</div>
+          <div class="text-lg font-semibold">{{ container.name }}</div>
           <div class="muted">{{ container.image }}</div>
         </div>
         <StatusTag :status="container.status" />
@@ -36,14 +36,3 @@ onMounted(() => {
   if (!containers.containers.length) containers.getContainers();
 });
 </script>
-
-<style scoped lang="scss">
-@import '@/styles/mixins';
-
-.detail {
-  margin-top: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-</style>

@@ -1,5 +1,5 @@
 <template>
-  <a-tag :color="color" class="status-tag">{{ label }}</a-tag>
+  <a-tag :color="color" class="font-semibold uppercase tracking-wide">{{ label }}</a-tag>
 </template>
 
 <script setup lang="ts">
@@ -21,12 +21,4 @@ const color = computed(() => {
 });
 
 const label = computed(() => props.status.toUpperCase());
-</script>
-
-<style scoped>
-.status-tag {
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-</style>
+</script> 

@@ -1,21 +1,17 @@
 <template>
-  <a-layout-header class="topbar">
-    <div class="topbar__left">
+  <a-layout-header class="h-16 px-6 bg-[var(--color-surface)] border-b border-[var(--color-border)] flex items-center justify-between">
+    <div class="flex items-center gap-3">
       <a-button type="text" @click="ui.toggleSidebar">
-        <i class="ri-menu-line"></i>
+        <i class="ri-menu-line text-lg"></i>
       </a-button>
-      <span class="topbar__title">Wheel Control</span>
+      <span class="font-semibold text-[var(--color-text)]">Wheel Control</span>
     </div>
-    <div class="topbar__right">
-      <a-button 
-        type="text" 
-        class="theme-toggle"
-        @click="toggleTheme"
-        :title="`Switch to ${ui.theme === 'dark' ? 'light' : 'dark'} theme`"
-      >
-        <i :class="ui.theme === 'dark' ? 'ri-sun-line' : 'ri-moon-line'"></i>
+
+    <div class="flex items-center gap-4">
+      <a-button type="text" class="group text-[var(--color-text)] text-lg transition-colors duration-300" @click="toggleTheme" :title="`Switch to ${ui.theme === 'dark' ? 'light' : 'dark'} theme`">
+        <i :class="[ui.theme === 'dark' ? 'ri-sun-line' : 'ri-moon-line', 'transform transition-transform duration-300 group-hover:rotate-180 text-xl']"></i>
       </a-button>
-      <span class="muted">{{ auth.user?.name || 'Operator' }}</span>
+      <span class="text-[var(--color-muted)]">{{ auth.user?.name || 'Operator' }}</span>
       <a-button type="primary" danger @click="handleLogout">Logout</a-button>
     </div>
   </a-layout-header>
@@ -69,55 +65,4 @@ const handleLogout = () => {
   auth.logout();
   router.push({ name: 'Login' });
 };
-</script>
-
-<style scoped>
-.topbar {
-  height: 64px;
-  padding: 0 24px;
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.topbar__left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.topbar__title {
-  font-weight: 600;
-  color: var(--color-text);
-}
-
-.topbar__right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.theme-toggle {
-  font-size: 18px;
-  color: var(--color-text) !important;
-  transition: color 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.theme-toggle:hover {
-  color: var(--color-primary) !important;
-}
-
-.theme-toggle i {
-  font-size: 20px;
-  transition: transform 0.3s ease, color 0.3s ease;
-}
-
-.theme-toggle:hover i {
-  transform: rotate(180deg);
-}
-</style>
+</script> 

@@ -1,6 +1,6 @@
 <template>
-  <div class="page">
-    <div class="page__title">Dashboard</div>
+  <div class="page px-6 py-6">
+    <div class="page__title text-2xl font-semibold mb-0">Dashboard</div>
 
     <div class="stats">
       <StatCard label="Online Rudders" :value="onlineRudders">
@@ -64,23 +64,3 @@ onMounted(() => {
   jobs.getJobs();
 });
 </script>
-
-<style scoped lang="scss">
-@import '@/styles/mixins';
-
-.stats {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-}
-
-.grid {
-  @include grid-auto(280px);
-  margin-bottom: 24px;
-}
-
-.rudder-grid {
-  @include grid-auto(260px);
-}
-</style>

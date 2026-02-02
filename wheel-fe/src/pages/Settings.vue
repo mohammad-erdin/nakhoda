@@ -1,6 +1,6 @@
 <template>
-  <div class="page">
-    <div class="page__title">Settings</div>
+  <div class="page px-6 py-6">
+    <div class="page__title text-2xl font-semibold mb-0">Settings</div>
     <a-form layout="vertical" class="card">
       <a-form-item label="Job Retention Days">
         <a-input-number v-model:value="jobRetentionDays" :min="1" :max="365" style="width: 200px" />

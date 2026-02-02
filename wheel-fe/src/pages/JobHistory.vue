@@ -1,9 +1,9 @@
 <template>
-  <div class="page">
-    <div class="page__title">Job History</div>
+  <div class="page px-6 py-6">
+    <div class="page__title text-2xl font-semibold mb-0">Job History</div>
     
     <!-- Filters -->
-    <a-card class="filters-card">
+    <a-card class="filters-card p-4 rounded-md">
       <a-form layout="inline" class="filters-form">
         <a-form-item label="Status">
           <a-select
@@ -215,61 +215,4 @@ onMounted(async () => {
   // loadJobs will be triggered by the watch above (immediate)
 });
 </script>
-
-<style scoped lang="scss">
-@import '@/styles/mixins';
-@import '@/styles/variables';
-
-.filters-card {
-  margin-bottom: $spacing-md;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  color: var(--color-text);
-
-  .ant-form-item-label label {
-    color: var(--color-muted);
-  }
-}
-
-.filters-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $spacing-sm;
-}
-
-// Deep selectors for Ant Design components
-:deep(.filters-card) {
-  .ant-select .ant-select-selector,
-  .ant-input,
-  .ant-input-number-input {
-    @include input-base;
-  }
-}
-
-.jobs-table {
-  background: var(--color-surface);
-  border-top: 1px solid var(--color-border);
-}
-
-:deep(.ant-table-thead > tr > th) {
-  background: var(--color-surface-alt) !important;
-  color: var(--color-muted) !important;
-  border-bottom: 1px solid var(--color-border) !important;
-}
-
-:deep(.clickable-row) {
-  cursor: pointer;
-  transition: background-color $transition-base;
-
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.03) !important;
-  }
-}
-
-.job-id,
-.rudder-id {
-  font-family: monospace;
-  font-size: 13px;
-}
-</style>
 

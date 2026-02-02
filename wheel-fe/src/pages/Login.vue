@@ -1,7 +1,7 @@
 <template>
-  <div class="login">
-    <div class="login__card">
-      <h1>Ayay Captain !</h1>
+  <div class="login min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-800 to-slate-900">
+    <div class="login__card bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-8 w-90 flex flex-col gap-4">
+      <h1 class="text-2xl font-semibold">Ayay Captain !</h1>
       <p class="muted">Enter your credentials please.</p>
 
       <a-form 
@@ -61,24 +61,3 @@ const onFinishFailed = (errorInfo: any) => {
   console.log('Failed:', errorInfo);
 };
 </script>
-
-<style scoped lang="scss">
-@import '@/styles/mixins';
-
-.login {
-  min-height: 100vh;
-  @include flex-center;
-  background: radial-gradient(circle at top, #1e293b, #0b1220 60%);
-
-  &__card {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 16px;
-    padding: 32px;
-    width: 360px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-}
-</style>

@@ -1,6 +1,6 @@
 <template>
-  <div class="page">
-    <div class="page__title">Create Container</div>
+  <div class="page px-6 py-6">
+    <div class="page__title text-2xl font-semibold mb-0">Create Container</div>
     <a-form layout="vertical" @finish="handleSubmit" @submit.prevent="handleSubmit" class="card">
       <a-form-item label="Agent ID">
         <a-input v-model:value="form.rudder_id" placeholder="name" />

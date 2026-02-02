@@ -1,61 +1,30 @@
 <template>
-  <div class="card rudder-card">
-    <div class="rudder-card__header flex flex--between">
-      <div class="rudder-card__left">
-        <div class="rudder-card__title">{{ rudder.hostname }}</div>
-        <div class="rudder-card__sub muted">
+  <div class="card bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-4">
+    <div class="flex items-center justify-between">
+      <div>
+        <div class="text-lg font-bold text-[var(--color-text)]">{{ rudder.hostname }}</div>
+        <div class="flex items-center gap-2 mt-1 text-[var(--color-muted)]">
           <StatusTag :status="rudder.status" />
         </div>
       </div>
     </div>
 
-    <div class="rudder-card__meta">
-      <div class="meta-item">
-        <i class="ri-terminal-box-line ri-1x" />
-        <span class="meta-label">{{ rudder.dockerVersion || '—' }}</span>
-      </div>
-
-      <div class="meta-divider" />
-
-      <div class="meta-item">
-        <i class="ri-global-line ri-1x" />
-        <span class="meta-label">{{ rudder.ip || 'Unknown IP' }}</span>
-      </div>
-
-      <div class="meta-divider" />
-
-      <div class="meta-item">
-        <i class="ri-cpu-line ri-1x" />
-        <span class="meta-label">{{ rudder.cores ?? '—' }} Cores</span>
-      </div>
-
-      <div class="meta-divider" />
-
-      <div class="meta-item">
-        <i class="ri-dashboard-line ri-1x" />
-        <span class="meta-label">{{ rudder.load ?? '—' }}</span>
-      </div>
-
-      <div class="meta-divider" />
-
-      <div class="meta-item">
-        <i class="ri-memory-line ri-1x" />
-        <span class="meta-label">{{ rudder.memoryUsed ? `${rudder.memoryUsed} GB` : '—' }}</span>
-      </div>
-
-      <div class="meta-divider" />
-
-      <div class="meta-item">
-        <i class="ri-hard-drive-2-line ri-1x" />
-        <span class="meta-label">{{ rudder.diskUsed ? `${rudder.diskUsed} GB` : '—' }}</span>
-      </div>
+    <div class="flex flex-wrap items-center gap-3 mt-3 pt-3 border-t border-[var(--color-border)] text-[var(--color-muted)] text-sm">
+      <div class="flex items-center gap-2"><i class="ri-terminal-box-line ri-1x" /><span>{{ rudder.dockerVersion || '—' }}</span></div>
+      <div class="flex items-center gap-2"><i class="ri-global-line ri-1x" /><span>{{ rudder.ip || 'Unknown IP' }}</span></div>
+      <div class="flex items-center gap-2"><i class="ri-cpu-line ri-1x" /><span>{{ rudder.cores ?? '—' }} Cores</span></div>
+      <div class="flex items-center gap-2"><i class="ri-dashboard-line ri-1x" /><span>{{ rudder.load ?? '—' }}</span></div>
+      <div class="flex items-center gap-2"><i class="ri-memory-line ri-1x" /><span>{{ rudder.memoryUsed ? `${rudder.memoryUsed} GB` : '—' }}</span></div>
+      <div class="flex items-center gap-2"><i class="ri-hard-drive-2-line ri-1x" /><span>{{ rudder.diskUsed ? `${rudder.diskUsed} GB` : '—' }}</span></div>
     </div>
 
-    <div class="rudder-card__tags">
+    <div class="mt-3">
       <template v-if="(rudder.tags || []).length">
-        <span v-for="t in rudder.tags" :key="t" class="chip">{{ t }}</span>
+        <div class="flex flex-wrap gap-2">
+          <span v-for="t in rudder.tags" :key="t" class="inline-block bg-[var(--color-surface-variant)] text-[var(--color-text)] px-2 py-1 rounded-full text-sm">{{ t }}</span>
+        </div>
       </template>
-      <div class="card__meta">Last heartbeat: {{ formatDate(rudder.lastHeartbeat) }}</div>
+      <div class="text-sm mt-3 text-[var(--color-muted)]">Last heartbeat: {{ formatDate(rudder.lastHeartbeat) }}</div>
     </div>
   </div>
 </template>
@@ -69,124 +38,6 @@ interface Props {
   rudder: Rudder;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>() as any;
+const rudder = props.rudder;
 </script>
-
-<style scoped>
-.rudder-card__header {
-  align-items: center;
-}
-
-.rudder-card__title {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--color-text) !important;
-}
-
-.rudder-card__sub {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin-top: 6px;
-  font-size: 13px;
-}
-
-.rudder-card__region {
-  color: var(--color-muted);
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 12px;
-}
-
-.pill {
-  background: var(--color-surface-variant);
-  border: 1px solid var(--color-border);
-  color: var(--color-text);
-  padding: 6px 10px;
-  border-radius: 999px;
-  display: inline-flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.switch {
-  display: inline-flex;
-  align-items: center;
-  margin-left: 8px;
-}
-
-.switch input {
-  display: none;
-}
-
-.switch .slider {
-  width: 36px;
-  height: 18px;
-  background: var(--color-border);
-  border-radius: 18px;
-  display: inline-block;
-  position: relative;
-}
-
-.switch input:checked + .slider {
-  background: var(--color-primary);
-}
-
-.switch .slider::after {
-  content: '';
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  background: white;
-  border-radius: 50%;
-  top: 2px;
-  left: 2px;
-  transition: transform 0.18s ease;
-}
-
-.switch input:checked + .slider::after {
-  transform: translateX(18px);
-}
-
-.rudder-card__meta {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  margin-top: 14px;
-  border-top: 1px solid var(--color-border);
-  padding-top: 12px;
-  flex-wrap: wrap;
-}
-
-.meta-item {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  color: var(--color-muted);
-  font-size: 13px;
-}
-
-.meta-divider {
-  width: 1px;
-  height: 18px;
-  background: var(--color-border);
-  opacity: 0.6;
-}
-
-.chip {
-  display: inline-block;
-  background: var(--color-surface-variant);
-  color: var(--color-text);
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 12px;
-  margin-right: 8px;
-  margin-top: 12px;
-}
-
-.card__meta {
-  margin-top: 12px;
-  font-size: 12px;
-  color: var(--color-muted);
-}
-</style>

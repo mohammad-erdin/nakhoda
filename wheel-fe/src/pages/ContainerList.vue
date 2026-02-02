@@ -1,12 +1,62 @@
 <template>
-  <div class="page">
-    <div class="flex flex--between">
-      <div class="page__title">Containers</div>
+  <div class="page px-6 py-6">
+    <div class="flex flex--between items-center">
+      <div class="page__title text-2xl font-semibold mb-0">Containers</div>
       <a-button type="primary" @click="$router.push('/containers/create')">Create</a-button>
     </div>
 
     <a-card class="filters-card">
-     asda
+      <a-form layout="inline" class="filters-form w-full">
+        <a-form-item label="Server">
+          <a-select v-model:value="filters.rudder" placeholder="Server" allowClear @change="onRudderChange" style="width: 200px">
+            <a-select-option v-for="r in rudders.rudders" :key="r.id" :value="r.id">{{ r.hostname || r.id }}</a-select-option>
+          </a-select>
+        </a-form-item>
+
+        <a-form-item label="Status">
+          <a-select v-model:value="filters.status" placeholder="Status" allowClear @change="applyFilters" style="width: 140px">
+            <a-select-option value="">All status</a-select-option>
+            <a-select-option value="running">Running</a-select-option>
+            <a-select-option value="stopped">Stopped</a-select-option>
+            <a-select-option value="exited">Exited</a-select-option>
+          </a-select>
+        </a-form-item>
+
+        <a-form-item class="ml-auto">
+          <a-input v-model:value="filters.searchText" placeholder="Search..." style="width: 200px" @input="applyFilters" />
+        </a-form-item>
+
+        <a-form-item>
+          <a-button-group class="inline-flex items-center gap-2 p-1 rounded-md bg-[var(--color-surface-alt)] border border-[var(--color-border)]" size="small">
+            <a-popover placement="top" trigger="hover">
+              <template #content>
+                Type <strong>Start</strong> to confirm starting selected containers.
+              </template>
+              <a-button type="default" :disabled="!hasSelection" @click="confirmStart" title="Start">
+                <i class="ri-play-fill" />
+              </a-button>
+            </a-popover>
+
+            <a-popover placement="top" trigger="hover">
+              <template #content>
+                Type <strong>Stop</strong> to confirm stopping selected containers.
+              </template>
+              <a-button type="default" :disabled="!hasSelection" @click="confirmStop" title="Stop">
+                <i class="ri-stop-fill" />
+              </a-button>
+            </a-popover>
+
+            <a-popover placement="top" trigger="hover">
+              <template #content>
+                Type <strong>Destroy</strong> to permanently delete selected containers.
+              </template>
+              <a-button type="default" danger class="text-[var(--color-danger)] destroy-btn" :disabled="!hasSelection" @click="confirmDestroy" title="Destroy">
+                <i class="ri-delete-bin-line" />
+              </a-button>
+            </a-popover>
+          </a-button-group>
+        </a-form-item>
+      </a-form>
     </a-card> 
 
     <a-alert v-if="containers.error" :message="auth.isAuthenticated ? containers.error : 'Not authenticated — please log in to view containers'" type="warning" show-icon style="margin-bottom: 12px;" />
@@ -208,29 +258,3 @@ watch(
   { immediate: true }
 );
 </script>
-
-<style scoped lang="scss">
-@import '@/styles/mixins';
-@import '@/styles/variables';
-
-.filters {
-  display: flex;
-  gap: 12px;
-  margin: $spacing-md 0;
-  align-items: center;
-
-  &__spacer {
-    flex: 1;
-  }
-}
-
-.action-buttons {
-  display: flex;
-  gap: $spacing-sm;
-  align-items: center;
-
-  i {
-    font-size: 16px;
-  }
-}
-</style>

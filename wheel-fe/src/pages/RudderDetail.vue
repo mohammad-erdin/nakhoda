@@ -28,15 +28,3 @@ onMounted(() => {
   if (!rudders.rudders.length) rudders.getRudders();
 });
 </script>
-
-<style scoped lang="scss">
-@import '@/styles/mixins';
-@import '@/styles/variables';
-
-.detail {
-  margin-top: $spacing-md;
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-sm;
-}
-</style>

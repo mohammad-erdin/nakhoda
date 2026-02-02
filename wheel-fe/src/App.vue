@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="!auth.checked" class="startup-spinner">
+    <div v-if="!auth.checked" class="flex items-center justify-center h-screen">
       <a-spin size="large" tip="Checking session..." />
     </div>
 
@@ -21,12 +21,3 @@ const route = useRoute();
 const auth = useAuth();
 const showLayout = computed(() => route.meta.requiresAuth !== false && auth.checked);
 </script>
-
-<style scoped>
-.startup-spinner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-}
-</style>
