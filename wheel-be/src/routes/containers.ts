@@ -48,11 +48,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response, next: NextFu
   try {
     const filters = containerFilterSchema.parse(req.query);
     const pagination = paginationSchema.parse(req.query);
-    // console.info("masuk",[
-    //   filters,
-    //   pagination
-    // ]);
-    
+
     // Get containers from all rudders cache
     const sessions = await cache.getAllRudderSessions();
     const allContainers: unknown[] = [];
@@ -70,6 +66,11 @@ router.get('/', authMiddleware, async (req: Request, res: Response, next: NextFu
       }
 
       if (containers) {
+        // append rudder id to each container
+        containers = (containers as Array<{ [key: string]: unknown }>).map((c) => ({
+          ...c,
+          rudderId: session.id,
+        }));
         allContainers.push(...containers);
       }
     }

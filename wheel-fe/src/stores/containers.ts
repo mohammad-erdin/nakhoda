@@ -16,7 +16,7 @@ export const useContainers = defineStore('containers', () => {
     return containers.value.filter((c: Container) => {
       if (filters.value.status && c.status !== filters.value.status) return false;
       if (filters.value.rudder && c.rudderId !== filters.value.rudder) return false;
-      if (filters.value.searchText && !c.image.includes(filters.value.searchText)) return false;
+      // if (filters.value.searchText && !c.image.includes(filters.value.searchText)) return false;
       return true;
     });
   });
@@ -71,6 +71,15 @@ export const useContainers = defineStore('containers', () => {
     return results;
   };
 
+  const startSelected = async (rudderId: string, ids: string[]) => {
+    const results = [] as Array<{ jobId: string; status: string }>;
+    for (const id of ids) {
+      const res = await apiPost<{ jobId: string; status: string }>(API_ENDPOINTS.CONTAINERS.START(id), { rudder_id: rudderId });
+      results.push(res);
+    }
+    return results;
+  };
+
   const destroySelected = async (rudderId: string, ids: string[]) => {
     const results = [] as Array<{ jobId: string; status: string }>;
     for (const id of ids) {
@@ -116,6 +125,7 @@ export const useContainers = defineStore('containers', () => {
     createContainer,
     deleteContainer,
     stopSelected,
+    startSelected,
     destroySelected,
     updateContainerStatus,
     updateContainerList,

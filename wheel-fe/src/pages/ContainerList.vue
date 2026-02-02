@@ -18,12 +18,48 @@
       </a-select>
 
       <div class="action-buttons">
-        <a-button type="default" shape="circle" :disabled="!hasSelection" @click="confirmStop" title="Stop">
-          <i class="ri-stop-fill" />
-        </a-button>
-        <a-button type="default" danger shape="circle" :disabled="!hasSelection" @click="confirmDestroy" title="Destroy">
-          <i class="ri-delete-bin-line" />
-        </a-button>
+        <template v-if="hasSelection">
+          <a-popover placement="top" trigger="hover">
+            <template #content>
+              Type <strong>Start</strong> to confirm starting selected containers.
+            </template>
+            <a-button type="default" :disabled="!hasSelection" @click="confirmStart" title="Start">
+              <i class="ri-play-fill" />
+            </a-button>
+          </a-popover>
+
+          <a-popover placement="top" trigger="hover">
+            <template #content>
+              Type <strong>Stop</strong> to confirm stopping selected containers.
+            </template>
+            <a-button type="default" :disabled="!hasSelection" @click="confirmStop" title="Stop">
+              <i class="ri-stop-fill" />
+            </a-button>
+          </a-popover>
+
+          <a-popover placement="top" trigger="hover">
+            <template #content>
+              Type <strong>Destroy</strong> to permanently delete selected containers.
+            </template>
+            <a-button type="default" danger :disabled="!hasSelection" @click="confirmDestroy" title="Destroy">
+              <i class="ri-delete-bin-line" />
+            </a-button>
+          </a-popover>
+        </template>
+
+        <template v-else>
+          <a-button type="default" disabled title="Start">
+            <i class="ri-play-fill" />
+          </a-button>
+
+          <a-button type="default" disabled title="Stop">
+            <i class="ri-stop-fill" />
+          </a-button>
+
+          <a-button type="default" danger disabled title="Destroy">
+            <i class="ri-delete-bin-line" />
+          </a-button>
+        </template>
       </div>
 
       <div class="filters__spacer"></div>
@@ -32,7 +68,6 @@
     </div>
 
     <a-alert v-if="containers.error" :message="auth.isAuthenticated ? containers.error : 'Not authenticated — please log in to view containers'" type="warning" show-icon style="margin-bottom: 12px;" />
-
     <ContainerTable :containers="containers.paginatedContainers" :loading="containers.loading" :selectedKeys="selectedKeys" @selectionChange="onSelectionChange" />
   </div>
 </template>
@@ -44,6 +79,8 @@ import { useContainers } from '@/stores/containers';
 import { useRudders } from '@/stores/rudders';
 import { useAuth } from '@/stores/auth';
 import ContainerTable from '@/components/ContainerTable.vue';
+import { apiPost } from '@/utils/apiClient';
+import { API_ENDPOINTS } from '@nakhoda/shared/constants';
 
 const containers = useContainers();
 const rudders = useRudders();
@@ -86,6 +123,29 @@ const confirmStop = async () => {
     message.success('Stop jobs submitted');
   } catch (err) {
     message.error((err as Error).message || 'Failed to stop containers');
+  }
+};
+
+const confirmStart = async () => {
+  if (!hasSelection.value) return;
+  const text = window.prompt('Type "Start" to confirm starting selected containers');
+  if (text !== 'Start') return;
+  try {
+    if (typeof containers.startSelected === 'function') {
+      await containers.startSelected(filters.rudder || rudders.selectedRudder?.id || '', selectedKeys.value);
+    } else {
+      // Fallback: call API directly for each id
+      for (const id of selectedKeys.value) {
+        await apiPost(API_ENDPOINTS.CONTAINERS.START(id), { rudder_id: filters.rudder || rudders.selectedRudder?.id || '' });
+      }
+    }
+
+    selectedKeys.value = [];
+    containers.getContainers();
+    message.success('Start jobs submitted');
+  } catch (err) {
+    console.warn('startSelected fallback error', err);
+    message.error((err as Error).message || 'Failed to start containers');
   }
 };
 
