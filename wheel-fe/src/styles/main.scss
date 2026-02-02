@@ -1,56 +1,9 @@
-// from tailwind
-// add up style
 @use 'font';
-@use 'transition';
-@use 'antd-override';
-@use 'helper';
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-
-*,
-::before,
-::after {
-  border-width: 0;
-  border-style: solid;
-  border-color: transparent;
-}
-
-// ---------------------------------
-// Scrollbar
-// ---------------------------------
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  @apply bg-zinc-50;
-}
-
-::-webkit-scrollbar-thumb {
-  @apply bg-gray-600;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-blue-900;
-}
-
-html {
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-a {
-  text-decoration: none;
-}
+@use 'tailwindcss';
 
 html,
 body,
 #app {
-  height: 100%;
-  background: #fff;
-  font-family: sans-serif;
-  font-size: 14px;
+  @apply h-full;
+  @apply w-full;
 }

@@ -12,21 +12,12 @@ import 'ant-design-vue/dist/reset.css';
 import 'remixicon/fonts/remixicon.css';
 import './styles/main.scss';
 
-
-// Start auth check in background so App can show a spinner while checking
-// import { useAuth } from '@/stores/auth';
-
-
 (async () => {
-const app = createApp(App);
-const pinia = createPinia();
-app.use(pinia);
-app.use(router);
-app.use(Antd);
-
-// const auth = useAuth();
-// void auth.checkAuth();
-
-app.mount('#app');
+    const app = createApp(App);
+    const pinia = createPinia();
+    app.use(pinia);
+    app.use(router);
+    app.use(Antd);
+    app.mount('#app');
 
 })();

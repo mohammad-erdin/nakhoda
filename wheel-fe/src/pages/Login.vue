@@ -1,32 +1,44 @@
 <template>
-  <div class="login min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-800 to-slate-900">
-    <div class="login__card bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-8 w-90 flex flex-col gap-4">
-      <h1 class="text-2xl font-semibold">Ayay Captain !</h1>
-      <p class="muted">Enter your credentials please.</p>
+  <div class="page">
 
-      <a-form 
-        layout="vertical" 
-        :model="formData" 
-        @finish="handleLogin"
-        @finishFailed="onFinishFailed"
-      >
-        <a-form-item 
-          name="username"
-          :rules="[{ required: true, message: 'Username is required' }]"
+    <div class="hero">
+      <div class="circle"></div>
+    </div>
+
+    <div class="page-inner">
+      <div class="card">
+        <div class="heading">
+          <h1 class="text-lg font-semibold text-slate-100">Ayay Captain !</h1>
+          <p class="text-xs text-slate-400">Enter your credentials please.</p>
+        </div>
+
+        <a-form
+          layout="vertical"
+          :model="formData"
+          @finish="handleLogin"
+          @finishFailed="onFinishFailed"
         >
-          <a-input v-model:value="formData.username" placeholder="Username" />
-        </a-form-item>
-        <a-form-item 
-          name="password"
-          :rules="[{ required: true, message: 'Password is required' }]"
-        >
-          <a-input-password v-model:value="formData.password" placeholder="Password" />
-        </a-form-item>
-        <a-alert v-if="auth.error" type="error" :message="auth.error" show-icon style="margin-bottom: 16px;" />
-        <a-button type="primary" html-type="submit" :loading="auth.isLoading" block>
-          Login
-        </a-button>
-      </a-form>
+          <a-form-item
+            name="username"
+            :rules="[{ required: true, message: 'Username is required' }]"
+          >
+            <a-input v-model:value="formData.username" placeholder="Username" size="middle" />
+          </a-form-item>
+
+          <a-form-item
+            name="password"
+            :rules="[{ required: true, message: 'Password is required' }]"
+          >
+            <a-input-password v-model:value="formData.password" placeholder="Password" size="middle" />
+          </a-form-item>
+
+          <a-alert v-if="auth.error" type="error" :message="auth.error" show-icon class="mb-3" />
+
+          <a-button type="primary" html-type="submit" :loading="auth.isLoading" block>
+            Login
+          </a-button>
+        </a-form>
+      </div>
     </div>
   </div>
 </template>
@@ -35,7 +47,6 @@
 import { reactive } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useAuth } from '@/stores/auth';
-import type { FormInstance } from 'ant-design-vue';
 
 const router = useRouter();
 const route = useRoute();
@@ -52,7 +63,6 @@ const handleLogin = async () => {
     const redirect = route.query.redirect as string | undefined;
     router.push(redirect || '/');
   } catch (err) {
-    // handled by store
     console.error('Login error:', err);
   }
 };
@@ -61,3 +71,42 @@ const onFinishFailed = (errorInfo: any) => {
   console.log('Failed:', errorInfo);
 };
 </script>
+
+<style scoped lang="scss">
+@reference 'tailwindcss';
+
+.page {
+  @apply relative min-h-screen w-full bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 overflow-hidden;
+}
+
+.hero {
+  @apply pointer-events-none absolute inset-x-0 top-0 flex justify-center;
+  transform: translateY(-25%);
+  .circle {
+    width: 50vw;
+    height: 100vw;
+    max-width: 90vh;
+    max-height: 90vh;
+    border-radius: 50%;
+    filter: blur(120px);
+    background: radial-gradient(circle at 50% 22%, rgba(59,130,246,0.2) 0%, rgba(100,116,139,0.06) 35%, transparent 65%);
+  }
+}
+
+.page-inner {
+  @apply min-h-screen w-full flex items-center justify-center px-4;
+}
+
+.card {
+  @apply w-full max-w-[360px] rounded-xl p-6 border border-slate-600 bg-slate-900/50;
+  box-shadow: 0 12px 40px rgba(2,6,23,0.6);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.heading {
+  @apply mb-4;
+  h1 { @apply text-lg font-semibold text-slate-100; }
+  p  { @apply text-xs text-slate-400; }
+}
+</style>
