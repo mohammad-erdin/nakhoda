@@ -66,6 +66,8 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
+@import '@/styles/mixins';
+
 .stats {
   display: flex;
   gap: 16px;
@@ -74,15 +76,11 @@ onMounted(() => {
 }
 
 .grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
+  @include grid-auto(280px);
   margin-bottom: 24px;
 }
 
 .rudder-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 16px;
+  @include grid-auto(260px);
 }
 </style>

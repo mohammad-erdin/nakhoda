@@ -38,6 +38,8 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
+@import '@/styles/mixins';
+
 .detail {
   margin-top: 16px;
   display: flex;

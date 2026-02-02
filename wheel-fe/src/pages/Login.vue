@@ -63,22 +63,22 @@ const onFinishFailed = (errorInfo: any) => {
 </script>
 
 <style scoped lang="scss">
+@import '@/styles/mixins';
+
 .login {
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include flex-center;
   background: radial-gradient(circle at top, #1e293b, #0b1220 60%);
-}
 
-.login__card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 16px;
-  padding: 32px;
-  width: 360px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  &__card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    padding: 32px;
+    width: 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
 }
 </style>

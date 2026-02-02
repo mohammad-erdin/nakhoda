@@ -217,30 +217,33 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
+@import '@/styles/mixins';
+@import '@/styles/variables';
+
 .filters-card {
-  margin-bottom: 16px;
+  margin-bottom: $spacing-md;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   color: var(--color-text);
+
+  .ant-form-item-label label {
+    color: var(--color-muted);
+  }
 }
 
 .filters-form {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: $spacing-sm;
 }
 
-/* Make form labels and inputs dark-friendly */
-.filters-card .ant-form-item-label label {
-  color: var(--color-muted);
-}
-
-:deep(.filters-card .ant-select .ant-select-selector),
-:deep(.filters-card .ant-input),
-:deep(.filters-card .ant-input-number-input) {
-  background: var(--color-surface-alt) !important;
-  color: var(--color-text) !important;
-  border-color: var(--color-border) !important;
+// Deep selectors for Ant Design components
+:deep(.filters-card) {
+  .ant-select .ant-select-selector,
+  .ant-input,
+  .ant-input-number-input {
+    @include input-base;
+  }
 }
 
 .jobs-table {
@@ -256,11 +259,11 @@ onMounted(async () => {
 
 :deep(.clickable-row) {
   cursor: pointer;
-  transition: background-color 0.2s;
-}
+  transition: background-color $transition-base;
 
-:deep(.clickable-row:hover) {
-  background-color: rgba(255,255,255,0.03) !important;
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+  }
 }
 
 .job-id,

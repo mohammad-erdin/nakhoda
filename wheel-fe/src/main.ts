@@ -3,8 +3,7 @@ import { createPinia } from 'pinia';
 import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/reset.css';
 import 'remixicon/fonts/remixicon.css';
-import './styles/variables.css';
-import './styles/main.css';
+import './styles/main.scss';
 import App from './App.vue';
 import router from './router';
 

@@ -178,74 +178,76 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-.page__header {
-  margin-bottom: 16px;
+@import '@/styles/mixins';
+@import '@/styles/variables';
+
+.page {
+  &__header {
+    margin-bottom: $spacing-md;
+  }
+
+  &__loading,
+  &__error {
+    @include flex-center;
+    min-height: 400px;
+  }
 }
 
-.page__loading,
-.page__error {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
-}
+.job-detail {
+  &__header {
+    @include flex-between;
+    align-items: flex-start;
+    margin-bottom: $spacing-lg;
+  }
 
-.job-detail__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
-}
+  &__title {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 $spacing-sm 0;
+  }
 
-.job-detail__title {
-  font-size: 24px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-}
+  &__id {
+    color: var(--color-muted);
+    font-family: monospace;
+    font-size: 14px;
+  }
 
-.job-detail__id {
-  color: #666;
-  font-family: monospace;
-  font-size: 14px;
-}
+  &__actions {
+    display: flex;
+    gap: $spacing-sm;
+  }
 
-.job-detail__actions {
-  display: flex;
-  gap: 8px;
-}
-
-.job-detail__card {
-  margin-bottom: 16px;
+  &__card {
+    margin-bottom: $spacing-md;
+  }
 }
 
 .metadata {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 16px;
-}
+  @include grid-auto(250px);
 
-.metadata__item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
+  &__item {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
 
-.metadata__label {
-  font-size: 12px;
-  color: #666;
-  text-transform: uppercase;
-  font-weight: 500;
-}
+  &__label {
+    font-size: 12px;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    font-weight: 500;
+  }
 
-.metadata__value {
-  font-size: 14px;
-  color: #000;
+  &__value {
+    font-size: 14px;
+    color: var(--color-text);
+  }
 }
 
 .json-viewer {
-  background: #f5f5f5;
-  padding: 16px;
-  border-radius: 4px;
+  background: var(--color-surface-alt);
+  padding: $spacing-md;
+  border-radius: $radius-sm;
   overflow-x: auto;
   font-family: monospace;
   font-size: 13px;
@@ -255,32 +257,32 @@ onMounted(() => {
 .logs {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: $spacing-sm;
 }
 
 .log-entry {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 8px;
-  background: #f9f9f9;
-  border-radius: 4px;
+  padding: $spacing-sm;
+  background: var(--color-surface-alt);
+  border-radius: $radius-sm;
   font-family: monospace;
   font-size: 13px;
-}
 
-.log-entry__time {
-  color: #666;
-  min-width: 90px;
-}
+  &__time {
+    color: var(--color-muted);
+    min-width: 90px;
+  }
 
-.log-entry__level {
-  min-width: 60px;
-  text-align: center;
-}
+  &__level {
+    min-width: 60px;
+    text-align: center;
+  }
 
-.log-entry__message {
-  flex: 1;
-  color: #000;
+  &__message {
+    flex: 1;
+    color: var(--color-text);
+  }
 }
 </style>

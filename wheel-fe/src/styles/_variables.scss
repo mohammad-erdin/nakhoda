@@ -1,0 +1,75 @@
+// SCSS Variables for compile-time usage
+$color-primary: #3b82f6;
+$color-primary-hover: #2563eb;
+$color-danger: #d9534f;
+$color-success: #10b981;
+$color-warning: #f59e0b;
+
+// Dark theme colors
+$dark-bg: #0f172a;
+$dark-surface: #111827;
+$dark-surface-alt: #1f2937;
+$dark-border: #1f2937;
+$dark-text: #e5e7eb;
+$dark-muted: #9ca3af;
+
+// Light theme colors
+$light-bg: #f1f5f9;
+$light-surface: #ffffff;
+$light-surface-alt: #e2e8f0;
+$light-border: #cbd5e1;
+$light-text: #0f172a;
+$light-muted: #475569;
+
+// Spacing
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+
+// Border radius
+$radius-sm: 6px;
+$radius-md: 8px;
+$radius-lg: 12px;
+$radius-xl: 16px;
+
+// Transitions
+$transition-fast: 0.15s ease;
+$transition-base: 0.2s ease;
+$transition-slow: 0.3s ease;
+
+// CSS Custom Properties (for runtime theming)
+:root {
+  --color-bg: #{$dark-bg};
+  --color-surface: #{$dark-surface};
+  --color-surface-alt: #{$dark-surface-alt};
+  --color-border: #{$dark-border};
+  --color-primary: #{$color-primary};
+  --color-text: #{$dark-text};
+  --color-muted: #{$dark-muted};
+  --color-danger: #{$color-danger};
+  --color-success: #{$color-success};
+  --color-warning: #{$color-warning};
+}
+
+:root[data-theme="light"] {
+  --color-bg: #{$light-bg};
+  --color-surface: #{$light-surface};
+  --color-surface-alt: #{$light-surface-alt};
+  --color-border: #{$light-border};
+  --color-primary: #2563eb;
+  --color-text: #{$light-text};
+  --color-muted: #{$light-muted};
+}
+
+:root[data-theme="dark"] {
+  --color-bg: #{$dark-bg};
+  --color-surface: #{$dark-surface};
+  --color-surface-alt: #{$dark-surface-alt};
+  --color-border: #{$dark-border};
+  --color-primary: #{$color-primary};
+  --color-text: #{$dark-text};
+  --color-muted: #{$dark-muted};
+}
+

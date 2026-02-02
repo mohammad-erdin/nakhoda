@@ -30,10 +30,13 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
+@import '@/styles/mixins';
+@import '@/styles/variables';
+
 .detail {
-  margin-top: 16px;
+  margin-top: $spacing-md;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: $spacing-sm;
 }
 </style>

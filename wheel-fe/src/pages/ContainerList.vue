@@ -210,20 +210,23 @@ watch(
 </script>
 
 <style scoped lang="scss">
+@import '@/styles/mixins';
+@import '@/styles/variables';
+
 .filters {
   display: flex;
   gap: 12px;
-  margin: 16px 0;
+  margin: $spacing-md 0;
   align-items: center;
-}
 
-.filters__spacer {
-  flex: 1;
+  &__spacer {
+    flex: 1;
+  }
 }
 
 .action-buttons {
   display: flex;
-  gap: 8px;
+  gap: $spacing-sm;
   align-items: center;
 
   i {
