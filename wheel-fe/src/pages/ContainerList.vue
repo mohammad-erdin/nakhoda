@@ -81,6 +81,7 @@ import { useAuth } from '@/stores/auth';
 import ContainerTable from '@/components/ContainerTable.vue';
 import { apiPost } from '@/utils/apiClient';
 import { API_ENDPOINTS } from '@nakhoda/shared/constants';
+import { confirmWithInput } from '@/utils/confirmPrompt';
 
 const containers = useContainers();
 const rudders = useRudders();
@@ -114,8 +115,14 @@ const onSelectionChange = (keys: string[], rows: any[]) => {
 
 const confirmStop = async () => {
   if (!hasSelection.value) return;
-  const text = window.prompt('Type "Stop" to confirm stopping selected containers');
-  if (text !== 'Stop') return;
+  const ok = await confirmWithInput({
+    title: 'Confirm Stop',
+    content: 'Type "Stop" to confirm stopping selected containers',
+    expected: 'Stop',
+    okText: 'Stop',
+    cancelText: 'Cancel',
+  });
+  if (!ok) return;
   try {
     await containers.stopSelected(filters.rudder || rudders.selectedRudder?.id || '', selectedKeys.value);
     selectedKeys.value = [];
@@ -128,8 +135,14 @@ const confirmStop = async () => {
 
 const confirmStart = async () => {
   if (!hasSelection.value) return;
-  const text = window.prompt('Type "Start" to confirm starting selected containers');
-  if (text !== 'Start') return;
+  const ok = await confirmWithInput({
+    title: 'Confirm Start',
+    content: 'Type "Start" to confirm starting selected containers',
+    expected: 'Start',
+    okText: 'Start',
+    cancelText: 'Cancel',
+  });
+  if (!ok) return;
   try {
     if (typeof containers.startSelected === 'function') {
       await containers.startSelected(filters.rudder || rudders.selectedRudder?.id || '', selectedKeys.value);
@@ -151,8 +164,14 @@ const confirmStart = async () => {
 
 const confirmDestroy = async () => {
   if (!hasSelection.value) return;
-  const text = window.prompt('Type "Destroy" to confirm destroying selected containers');
-  if (text !== 'Destroy') return;
+  const ok = await confirmWithInput({
+    title: 'Confirm Destroy',
+    content: 'Type "Destroy" to confirm destroying selected containers',
+    expected: 'Destroy',
+    okText: 'Destroy',
+    cancelText: 'Cancel',
+  });
+  if (!ok) return;
   try {
     await containers.destroySelected(filters.rudder || rudders.selectedRudder?.id || '', selectedKeys.value);
     selectedKeys.value = [];
