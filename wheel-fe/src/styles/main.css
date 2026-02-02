@@ -169,6 +169,39 @@ body {
   background: rgba(59, 130, 246, 0.05) !important;
 }
 
+/* Better contrast for selected rows in dark theme */
+.ant-table-tbody > tr.ant-table-row-selected > td {
+  background: rgba(59, 130, 246, 0.12) !important; /* subtle blue */
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+}
+
+.ant-table-tbody > tr.ant-table-row-selected:hover > td {
+  background: rgba(59, 130, 246, 0.16) !important;
+}
+
+/* Ensure tags and status chips remain visible on selected rows */
+.ant-table-tbody > tr.ant-table-row-selected .ant-tag,
+.ant-table-tbody > tr.ant-table-row-selected .ant-tag-checkable {
+  background: rgba(59,130,246,0.12) !important;
+  border-color: rgba(59,130,246,0.25) !important;
+  color: var(--color-text) !important;
+}
+
+/* Keep text fully opaque in selected row */
+.ant-table-tbody > tr.ant-table-row-selected td,
+.ant-table-tbody > tr.ant-table-row-selected td * {
+  opacity: 1 !important;
+  color: var(--color-text) !important;
+}
+
+/* Checkbox in selected row - keep visible */
+.ant-table-tbody > tr.ant-table-row-selected .ant-checkbox .ant-checkbox-inner {
+  background: rgba(59,130,246,0.18) !important;
+  border-color: rgba(59,130,246,0.25) !important;
+}
+
+
 /* .ant-tag {
   background-color: var(--color-surface-alt) !important;
   border-color: var(--color-border) !important;

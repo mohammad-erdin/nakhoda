@@ -1,5 +1,5 @@
 import { h, ref } from 'vue';
-import { Modal, message } from 'ant-design-vue';
+import { Modal, message, Input } from 'ant-design-vue';
 
 export interface ConfirmOptions {
   title?: string;
@@ -14,25 +14,34 @@ export function confirmWithInput(opts: ConfirmOptions): Promise<boolean> {
   const input = ref('');
 
   return new Promise((resolve) => {
-    const modal = Modal.confirm({
+    let modal: any = null;
+
+    modal = Modal.confirm({
       title,
       icon: null,
       content: h('div', { style: 'display:flex;flex-direction:column;gap:8px' }, [
         content ? h('div', { style: 'white-space:pre-wrap' }, content) : null,
-        h('input', {
+        h(Input, {
           value: input.value,
           onInput: (e: Event) => {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore - Event typing
             input.value = (e.target as HTMLInputElement).value;
+            // Update modal OK button disabled state
+            try {
+              modal?.update?.({ okButtonProps: { disabled: !!expected && input.value !== expected } });
+            } catch (err) {
+            }
           },
           placeholder: expected ? `Type ${expected} to confirm` : '',
-          style: 'width:100%;padding:8px;border:1px solid #d9d9d9;border-radius:4px',
+          style: 'width:100%',
+          autofocus: true,
         }),
       ]),
       okText,
       cancelText,
       maskClosable: false,
+      // Initially disable OK if expected is provided
+      okButtonProps: { disabled: !!expected },
       onOk: () => {
         if (expected && input.value !== expected) {
           message.error(`Please type "${expected}" to confirm.`);
