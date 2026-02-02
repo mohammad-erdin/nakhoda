@@ -38,6 +38,16 @@ const applyTheme = () => {
 };
 
 onMounted(() => {
+  // Apply theme from localStorage if present (ensure theme reflects cached settings immediately)
+  try {
+    const raw = localStorage.getItem('settings');
+    if (raw) {
+      const s = JSON.parse(raw);
+      if (s?.theme) ui.setTheme(s.theme);
+    }
+  } catch (e) {
+    // ignore
+  }
   applyTheme();
   connect();
 });

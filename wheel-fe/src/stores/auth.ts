@@ -18,6 +18,9 @@ export const useAuth = defineStore('auth', () => {
   const isAuthenticated = computed(() => !!token.value);
   const checked = ref(false);
 
+  // Dedupe in-flight checkAuth calls
+  let checkAuthPromise: Promise<boolean> | null = null;
+
   const login = async (username: string, password: string) => {
     isLoading.value = true;
     error.value = null;
@@ -29,7 +32,8 @@ export const useAuth = defineStore('auth', () => {
       token.value = data.sessionToken || 'auth-token';
       user.value = data.user;
       localStorage.setItem('auth_token', token.value);
-      checked.value = true;
+      // fetch settings after login
+      await checkAuth();
     } catch (err) {
       error.value = (err as Error).message;
       throw err;
@@ -43,25 +47,36 @@ export const useAuth = defineStore('auth', () => {
     user.value = null;
     checked.value = true;
     localStorage.removeItem('auth_token');
+    try {
+      localStorage.removeItem('settings');
+    } catch (e) {}
   };
 
   const checkAuth = async () => {
-    // If no token, mark as checked and return
-    if (!token.value) {
-      checked.value = true;
-      return false;
-    }
+    // Dedupe concurrent calls
+    if (checkAuthPromise) return checkAuthPromise;
 
-    try {
-      // Use a lightweight authenticated endpoint to validate token
-      await apiGet(API_ENDPOINTS.SETTINGS.GET as any);
-      checked.value = true;
-      return true;
-    } catch (err) {
-      logout();
-      checked.value = true;
-      return false;
-    }
+    checkAuthPromise = (async () => {
+      // If no token, mark as checked and return
+      if (!token.value) {
+        checked.value = true;
+        checkAuthPromise = null;
+        return false;
+      }
+
+      try {
+        checked.value = true;
+        checkAuthPromise = null;
+        return true;
+      } catch (err) {
+        logout();
+        checked.value = true;
+        checkAuthPromise = null;
+        return false;
+      }
+    })();
+
+    return checkAuthPromise;
   };
 
   return { token, user, isAuthenticated, checked, isLoading, error, login, logout, checkAuth };

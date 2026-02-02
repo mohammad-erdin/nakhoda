@@ -25,14 +25,44 @@
 import { useRouter } from 'vue-router';
 import { useAuth } from '@/stores/auth';
 import { useUI } from '@/stores/ui';
+import { useSettings } from '@/stores/settings';
 
 const router = useRouter();
 const auth = useAuth();
 const ui = useUI();
+const settings = useSettings();
 
-const toggleTheme = () => {
+const toggleTheme = async () => {
   const newTheme = ui.theme === 'dark' ? 'light' : 'dark';
+
+  // apply immediately for instant UX
   ui.setTheme(newTheme);
+
+  // persist to localStorage (merge with existing settings if present)
+  try {
+    const raw = localStorage.getItem('settings');
+    const parsed = raw ? JSON.parse(raw) : {};
+    parsed.theme = newTheme;
+    localStorage.setItem('settings', JSON.stringify(parsed));
+  } catch (e) {
+    // ignore localStorage errors
+    // console.warn('Failed to update local settings', e);
+  }
+
+  // if authenticated, persist to server; otherwise keep local only
+  if (auth.isAuthenticated) {
+    try {
+      await settings.saveToApi({ theme: newTheme });
+    } catch (e) {
+      // don't block the UI; optionally log
+      // console.warn('Failed to save theme to server', e);
+    }
+  } else {
+    // update in-memory settings store so other parts of app see the change
+    try {
+      settings.settings = { ...(settings.settings || {}), theme: newTheme } as any;
+    } catch (e) {}
+  }
 };
 
 const handleLogout = () => {
@@ -72,7 +102,7 @@ const handleLogout = () => {
 .theme-toggle {
   font-size: 18px;
   color: var(--color-text) !important;
-  transition: transform 0.3s ease, color 0.3s ease;
+  transition: color 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -80,10 +110,14 @@ const handleLogout = () => {
 
 .theme-toggle:hover {
   color: var(--color-primary) !important;
-  transform: rotate(180deg);
 }
 
 .theme-toggle i {
   font-size: 20px;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.theme-toggle:hover i {
+  transform: rotate(180deg);
 }
 </style>

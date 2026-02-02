@@ -16,13 +16,35 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { message } from 'ant-design-vue';
+import { apiPatch } from '@/utils/apiClient';
+import { useAuth } from '@/stores/auth';
+import { API_ENDPOINTS } from '@nakhoda/shared/constants';
+
+const auth = useAuth();
 
 const jobRetentionDays = ref(30);
 const language = ref('en');
+import { useSettings } from '@/stores/settings';
 
-const save = () => {
-  message.success('Settings saved successfully');
+const settingsStore = useSettings();
+
+onMounted(() => {
+  const s = settingsStore.settings;
+  if (s) {
+    jobRetentionDays.value = s.jobRetentionDays || jobRetentionDays.value;
+    language.value = s.language || language.value;
+  }
+});
+
+const save = async () => {
+  try {
+    const payload = { jobRetentionDays: jobRetentionDays.value, language: language.value };
+    const updated = await settingsStore.saveToApi(payload);
+    message.success('Settings saved successfully');
+  } catch (err) {
+    message.error((err as Error).message || 'Failed to save settings');
+  }
 };
 </script>
