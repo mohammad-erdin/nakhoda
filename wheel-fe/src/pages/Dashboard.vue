@@ -65,7 +65,7 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .stats {
   display: flex;
   gap: 16px;

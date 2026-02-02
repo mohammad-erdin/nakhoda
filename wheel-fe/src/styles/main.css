@@ -201,6 +201,80 @@ body {
   border-color: rgba(59,130,246,0.25) !important;
 }
 
+/* Shared action button group styles (apply globally) */
+.action-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 8px;
+  background: var(--color-surface-alt) !important;
+  border: 1px solid var(--color-border) !important;
+}
+
+.action-group .ant-btn {
+  border: none !important;
+  background: transparent !important;
+  padding: 6px 10px !important;
+  min-width: 36px;
+  height: 32px;
+  color: var(--color-muted) !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* subtle hover */
+.action-group .ant-btn:hover {
+  background: rgba(0,0,0,0.04) !important;
+  color: var(--color-text) !important;
+}
+
+/* subtle selected look that works in dark/light */
+.action-group .ant-btn:first-child {
+  background: rgba(255,255,255,0.02) !important;
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.06);
+  color: var(--color-text) !important;
+  border-radius: 6px;
+}
+
+.destroy-btn {
+  color: var(--color-danger, #d9534f) !important;
+}
+
+.action-group .ant-btn:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Keep action icons color when row is selected */
+.ant-table-tbody > tr.ant-table-row-selected td .action-group .ant-btn,
+.ant-table-tbody > tr.ant-table-row-selected td .action-group .ant-btn i {
+  color: var(--color-muted) !important;
+}
+
+.ant-table-tbody > tr.ant-table-row-selected td .action-group .destroy-btn,
+.ant-table-tbody > tr.ant-table-row-selected td .action-group .destroy-btn i,
+.ant-table-tbody > tr.ant-table-row-selected td .destroy-btn {
+  color: var(--color-danger, #d9534f) !important;
+}
+
+/* Ensure destroy icon/button is red in all states and selectors (covers <i>, svg, Ant icons) */
+.destroy-btn,
+.destroy-btn i,
+.destroy-btn .ri-delete-bin-line,
+.destroy-btn svg,
+.destroy-btn .anticon,
+.action-group .destroy-btn,
+.action-group .destroy-btn i,
+.action-group .destroy-btn .ri-delete-bin-line,
+.action-group .destroy-btn svg,
+.action-group .destroy-btn .anticon {
+  color: var(--color-danger, #d9534f) !important;
+  fill: var(--color-danger, #d9534f) !important;
+  border-color: transparent !important;
+}
+
 
 /* .ant-tag {
   background-color: var(--color-surface-alt) !important;
@@ -274,6 +348,36 @@ body {
   color: var(--color-text) !important;
   border-color: var(--color-border) !important;
   background: transparent !important;
+}
+
+/* Shared filter card used across pages (mimics Job History look) */
+.filters-card {
+  margin-bottom: 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.filters-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Make form labels and inputs dark-friendly inside filters card */
+.filters-card .ant-form-item-label label {
+  color: var(--color-muted);
+}
+
+.filters-card .ant-select .ant-select-selector,
+.filters-card .ant-input,
+.filters-card .ant-input-number-input {
+  background: var(--color-surface-alt) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
 }
 
 .ant-modal-confirm-btns .ant-btn-default:hover {

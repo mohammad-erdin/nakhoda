@@ -5,70 +5,12 @@
       <a-button type="primary" @click="$router.push('/containers/create')">Create</a-button>
     </div>
 
-    <div class="filters">
-      <a-select v-model:value="filters.rudder" placeholder="Server" allowClear @change="onRudderChange" style="width: 200px">
-        <a-select-option v-for="r in rudders.rudders" :key="r.id" :value="r.id">{{ r.hostname || r.id }}</a-select-option>
-      </a-select>
-
-      <a-select v-model:value="filters.status" placeholder="Status" allowClear @change="applyFilters" style="width: 140px">
-        <a-select-option value="">All status</a-select-option>
-        <a-select-option value="running">Running</a-select-option>
-        <a-select-option value="stopped">Stopped</a-select-option>
-        <a-select-option value="exited">Exited</a-select-option>
-      </a-select>
-
-      <div class="action-buttons">
-        <template v-if="hasSelection">
-          <a-popover placement="top" trigger="hover">
-            <template #content>
-              Type <strong>Start</strong> to confirm starting selected containers.
-            </template>
-            <a-button type="default" :disabled="!hasSelection" @click="confirmStart" title="Start">
-              <i class="ri-play-fill" />
-            </a-button>
-          </a-popover>
-
-          <a-popover placement="top" trigger="hover">
-            <template #content>
-              Type <strong>Stop</strong> to confirm stopping selected containers.
-            </template>
-            <a-button type="default" :disabled="!hasSelection" @click="confirmStop" title="Stop">
-              <i class="ri-stop-fill" />
-            </a-button>
-          </a-popover>
-
-          <a-popover placement="top" trigger="hover">
-            <template #content>
-              Type <strong>Destroy</strong> to permanently delete selected containers.
-            </template>
-            <a-button type="default" danger :disabled="!hasSelection" @click="confirmDestroy" title="Destroy">
-              <i class="ri-delete-bin-line" />
-            </a-button>
-          </a-popover>
-        </template>
-
-        <template v-else>
-          <a-button type="default" disabled title="Start">
-            <i class="ri-play-fill" />
-          </a-button>
-
-          <a-button type="default" disabled title="Stop">
-            <i class="ri-stop-fill" />
-          </a-button>
-
-          <a-button type="default" danger disabled title="Destroy">
-            <i class="ri-delete-bin-line" />
-          </a-button>
-        </template>
-      </div>
-
-      <div class="filters__spacer"></div>
-
-      <a-input v-model:value="filters.searchText" placeholder="Search..." style="width: 200px" @input="applyFilters" />
-    </div>
+    <a-card class="filters-card">
+     asda
+    </a-card> 
 
     <a-alert v-if="containers.error" :message="auth.isAuthenticated ? containers.error : 'Not authenticated — please log in to view containers'" type="warning" show-icon style="margin-bottom: 12px;" />
-    <ContainerTable :containers="containers.paginatedContainers" :loading="containers.loading" :selectedKeys="selectedKeys" @selectionChange="onSelectionChange" />
+  <ContainerTable :containers="containers.paginatedContainers" :loading="containers.loading" :selectedKeys="selectedKeys" @selectionChange="onSelectionChange" @action="handleRowAction" />
   </div>
 </template>
 
@@ -111,6 +53,60 @@ const onRudderChange = (value: string) => {
 const onSelectionChange = (keys: string[], rows: any[]) => {
   selectedKeys.value = keys;
   selectedRows.value = rows;
+};
+
+const handleRowAction = async ({ action, id, rudderId }: { action: string; id: string; rudderId?: string }) => {
+  const targetRudder = rudderId || filters.rudder || rudders.selectedRudder?.id || '';
+  const cfg: Record<string, any> = {
+    start: {
+      title: 'Confirm Start',
+      expected: 'Start',
+      okText: 'Start',
+      fn: async () => {
+        if (typeof containers.startSelected === 'function') {
+          await containers.startSelected(targetRudder, [id]);
+        } else {
+          await apiPost(API_ENDPOINTS.CONTAINERS.START(id), { rudder_id: targetRudder });
+        }
+      },
+    },
+    stop: {
+      title: 'Confirm Stop',
+      expected: 'Stop',
+      okText: 'Stop',
+      fn: async () => {
+        await containers.stopSelected(targetRudder, [id]);
+      },
+    },
+    destroy: {
+      title: 'Confirm Destroy',
+      expected: 'Destroy',
+      okText: 'Destroy',
+      fn: async () => {
+        await containers.destroySelected(targetRudder, [id]);
+      },
+    },
+  };
+
+  const conf = cfg[action];
+  if (!conf) return;
+
+  const ok = await confirmWithInput({
+    title: conf.title,
+    content: `Type "${conf.expected}" to confirm ${conf.title.toLowerCase()}`,
+    expected: conf.expected,
+    okText: conf.okText,
+    cancelText: 'Cancel',
+  });
+  if (!ok) return;
+
+  try {
+    await conf.fn();
+    containers.getContainers();
+    message.success(`${conf.okText} job submitted`);
+  } catch (err) {
+    message.error((err as Error).message || `Failed to ${action}`);
+  }
 };
 
 const confirmStop = async () => {
@@ -213,7 +209,7 @@ watch(
 );
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .filters {
   display: flex;
   gap: 12px;
@@ -229,9 +225,9 @@ watch(
   display: flex;
   gap: 8px;
   align-items: center;
-}
 
-.action-buttons i {
-  font-size: 16px;
+  i {
+    font-size: 16px;
+  }
 }
 </style>

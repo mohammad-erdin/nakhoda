@@ -177,7 +177,7 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .page__header {
   margin-bottom: 16px;
 }

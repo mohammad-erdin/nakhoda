@@ -62,7 +62,7 @@ const onFinishFailed = (errorInfo: any) => {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .login {
   min-height: 100vh;
   display: flex;

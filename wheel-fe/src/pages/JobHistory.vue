@@ -60,7 +60,7 @@
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'id'">
-          <span class="job-id">{{ record.id.substring(0, 8) }}...</span>
+          <span class="job-id">{{record.id }}</span>
         </template>
         <template v-if="column.key === 'status'">
           <StatusTag :status="record.status" />
@@ -89,6 +89,8 @@ import { useJobs } from '@/stores/jobs';
 import { useRudders } from '@/stores/rudders';
 import StatusTag from '@/components/StatusTag.vue';
 import { formatDate, formatDuration } from '@/utils/format';
+import { apiGet } from '@/utils/apiClient';
+import { API_ENDPOINTS } from '@nakhoda/shared/constants';
 
 const router = useRouter();
 const jobsStore = useJobs();
@@ -117,13 +119,14 @@ const jobs = reactive({
 });
 
 const columns = [
-  { title: 'Job ID', dataIndex: 'id', key: 'id', width: 120 },
+  { title: 'Job ID', dataIndex: 'id', key: 'id', width: 350 },
   { title: 'Action', dataIndex: 'action', key: 'action', width: 200 },
-  { title: 'Server', dataIndex: 'rudderId', key: 'rudderId', width: 150 },
-  { title: 'Status', dataIndex: 'status', key: 'status', width: 100 },
-  { title: 'Created', dataIndex: 'createdAt', key: 'createdAt', width: 180 },
-  { title: 'Completed', dataIndex: 'completedAt', key: 'completedAt', width: 180 },
+  { title: 'Server', dataIndex: 'rudderId', key: 'rudderId', width: 200 },
+  { title: 'Status', dataIndex: 'status', key: 'status', width: 200 },
+  { title: 'Created', dataIndex: 'createdAt', key: 'createdAt', width: 200 },
+  { title: 'Completed', dataIndex: 'completedAt', key: 'completedAt', width: 200 },
   { title: 'Duration', key: 'duration', width: 120 },
+  { title: '' },
 ];
 
 const pagination = computed(() => ({
@@ -159,15 +162,7 @@ const loadJobs = async () => {
     params.append('page', currentPage.value.toString());
     params.append('limit', pageSize.value.toString());
 
-    const response = await fetch(`/api/jobs?${params.toString()}`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
-
-    if (!response.ok) throw new Error('Failed to fetch jobs');
-
-    const data = await response.json();
+    const data = await apiGet<any>(`${API_ENDPOINTS.JOBS.LIST}?${params.toString()}`);
     jobs.items = data?.items || [];
     jobs.total = data?.total || 0;
   } catch (err) {
@@ -221,7 +216,7 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .filters-card {
   margin-bottom: 16px;
   background: var(--color-surface);

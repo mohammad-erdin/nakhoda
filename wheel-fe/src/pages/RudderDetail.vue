@@ -29,7 +29,7 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .detail {
   margin-top: 16px;
   display: flex;

@@ -9,11 +9,12 @@ export const useVolumes = defineStore('volumes', () => {
   const loading = ref(false);
   const error = ref<string | null>(null);
 
-  const getVolumes = async () => {
+  const getVolumes = async (rudderId?: string) => {
     loading.value = true;
     error.value = null;
     try {
-      const response = await apiGet<any>(API_ENDPOINTS.VOLUMES.LIST);
+      const url = rudderId ? `${API_ENDPOINTS.VOLUMES.LIST}?rudder_id=${encodeURIComponent(rudderId)}` : API_ENDPOINTS.VOLUMES.LIST;
+      const response = await apiGet<any>(url);
       // Handle both direct array and paginated response
       volumes.value = Array.isArray(response) ? response : (response.items || []);
     } catch (err) {

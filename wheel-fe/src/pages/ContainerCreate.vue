@@ -45,7 +45,7 @@ const handleSubmit = async () => {
 
   // Basic client-side validation to give faster feedback
   if (!form.rudder_id || !form.image || !form.name) {
-    message.error('Rudder ID, Image and Container Name are required');
+    message.error('Server ID, Image and Container Name are required');
     return;
   }
 

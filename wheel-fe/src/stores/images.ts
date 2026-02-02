@@ -9,11 +9,12 @@ export const useImages = defineStore('images', () => {
   const loading = ref(false);
   const error = ref<string | null>(null);
 
-  const getImages = async () => {
+  const getImages = async (rudderId?: string) => {
     loading.value = true;
     error.value = null;
     try {
-      const response = await apiGet<any>(API_ENDPOINTS.IMAGES.LIST);
+      const url = rudderId ? `${API_ENDPOINTS.IMAGES.LIST}?rudder_id=${encodeURIComponent(rudderId)}` : API_ENDPOINTS.IMAGES.LIST;
+      const response = await apiGet<any>(url);
       // Handle both direct array and paginated response
       images.value = Array.isArray(response) ? response : (response.items || []);
     } catch (err) {

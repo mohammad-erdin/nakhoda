@@ -11,7 +11,7 @@
       </div>
       <div class="detail">
         <div><strong>ID:</strong> {{ container.id }}</div>
-        <div><strong>Rudder:</strong> {{ container.rudderId }}</div>
+        <div><strong>Server:</strong> {{ container.rudderId }}</div>
       </div>
     </div>
     <EmptyState v-else message="Container not found." />
@@ -37,7 +37,7 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .detail {
   margin-top: 16px;
   display: flex;
