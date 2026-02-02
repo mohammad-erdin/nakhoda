@@ -1,30 +1,53 @@
 <template>
-  <div class="page px-6 py-6">
-    <div class="page__title text-2xl font-semibold mb-0">Dashboard</div>
+	<div class="page px-6 py-6">
+		<div class="page__title text-2xl font-semibold mb-0">
+			Dashboard
+		</div>
 
-    <div class="stats">
-      <StatCard label="Online Rudders" :value="onlineRudders">
-        {{ rudders.rudders.length }} total
-      </StatCard>
-      <StatCard label="Containers" :value="containers.containers.length">
-        {{ runningContainers }} running
-      </StatCard>
-      <StatCard label="Jobs" :value="jobs.jobs.length">
-        {{ failedJobs }} failed
-      </StatCard>
-    </div>
+		<div class="stats">
+			<StatCard
+				label="Online Rudders"
+				:value="onlineRudders"
+			>
+				{{ rudders.rudders.length }} total
+			</StatCard>
+			<StatCard
+				label="Containers"
+				:value="containers.containers.length"
+			>
+				{{ runningContainers }} running
+			</StatCard>
+			<StatCard
+				label="Jobs"
+				:value="jobs.jobs.length"
+			>
+				{{ failedJobs }} failed
+			</StatCard>
+		</div>
 
-    <div class="grid">
-      <JobSummary :counts="jobCounts" />
-      <QuickActions />
-    </div>
+		<div class="grid">
+			<JobSummary :counts="jobCounts" />
+			<QuickActions />
+		</div>
 
-    <div class="page__title">Rudder Status</div>
-    <div class="rudder-grid" v-if="rudders.rudders.length">
-      <RudderStatusCard v-for="rudder in rudders.rudders" :key="rudder.id" :rudder="rudder" />
-    </div>
-    <EmptyState v-else message="No rudders registered yet." />
-  </div>
+		<div class="page__title">
+			Rudder Status
+		</div>
+		<div
+			class="rudder-grid"
+			v-if="rudders.rudders.length"
+		>
+			<RudderStatusCard
+				v-for="rudder in rudders.rudders"
+				:key="rudder.id"
+				:rudder="rudder"
+			/>
+		</div>
+		<EmptyState
+			v-else
+			message="No rudders registered yet."
+		/>
+	</div>
 </template>
 
 <script setup lang="ts">
@@ -45,22 +68,22 @@ const jobs = useJobs();
 
 const onlineRudders = computed(() => rudders.onlineRudders.length);
 const runningContainers = computed(() =>
-  (containers.containers as Container[]).filter((c: Container) => c.status === 'running').length
+	(containers.containers as Container[]).filter((c: Container) => c.status === 'running').length
 );
 const failedJobs = computed(() =>
-  (jobs.jobs as Job[]).filter((j: Job) => j.status === 'failed').length
+	(jobs.jobs as Job[]).filter((j: Job) => j.status === 'failed').length
 );
 
 const jobCounts = computed(() => ({
-  pending: (jobs.jobs as Job[]).filter((j: Job) => j.status === 'pending').length,
-  running: (jobs.jobs as Job[]).filter((j: Job) => j.status === 'running').length,
-  done: (jobs.jobs as Job[]).filter((j: Job) => j.status === 'done').length,
-  failed: (jobs.jobs as Job[]).filter((j: Job) => j.status === 'failed').length,
+	pending: (jobs.jobs as Job[]).filter((j: Job) => j.status === 'pending').length,
+	running: (jobs.jobs as Job[]).filter((j: Job) => j.status === 'running').length,
+	done: (jobs.jobs as Job[]).filter((j: Job) => j.status === 'done').length,
+	failed: (jobs.jobs as Job[]).filter((j: Job) => j.status === 'failed').length,
 }));
 
 onMounted(() => {
-  rudders.getRudders();
-  containers.getContainers();
-  jobs.getJobs();
+	rudders.getRudders();
+	containers.getContainers();
+	jobs.getJobs();
 });
 </script>

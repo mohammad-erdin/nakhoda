@@ -1,21 +1,43 @@
 <template>
-  <div class="page px-6 py-6">
-    <div class="flex flex--between items-center">
-      <div class="page__title text-2xl font-semibold mb-0">Volumes</div>
-    </div>
+	<div class="page px-6 py-6">
+		<div class="flex flex--between items-center">
+			<div class="page__title text-2xl font-semibold mb-0">
+				Volumes
+			</div>
+		</div>
 
-    <a-card class="filters-card">
-      <a-form layout="inline" class="filters-form">
-        <a-form-item label="Server">
-          <a-select v-model:value="filters.rudder" placeholder="Server" allowClear @change="onRudderChange" style="width: 200px">
-            <a-select-option v-for="r in rudders.rudders" :key="r.id" :value="r.id">{{ r.hostname || r.id }}</a-select-option>
-          </a-select>
-        </a-form-item>
-      </a-form>
-    </a-card> 
+		<a-card class="filters-card">
+			<a-form
+				layout="inline"
+				class="filters-form"
+			>
+				<a-form-item label="Server">
+					<a-select
+						v-model:value="filters.rudder"
+						placeholder="Server"
+						allow-clear
+						@change="onRudderChange"
+						style="width: 200px"
+					>
+						<a-select-option
+							v-for="r in rudders.rudders"
+							:key="r.id"
+							:value="r.id"
+						>
+							{{ r.hostname || r.id }}
+						</a-select-option>
+					</a-select>
+				</a-form-item>
+			</a-form>
+		</a-card> 
 
-    <a-table :columns="columns" :data-source="volumes.volumes" :loading="volumes.loading" row-key="id" />
-  </div>
+		<a-table
+			:columns="columns"
+			:data-source="volumes.volumes"
+			:loading="volumes.loading"
+			row-key="id"
+		/>
+	</div>
 </template>
 
 <script setup lang="ts">
@@ -30,32 +52,32 @@ const rudders = useRudders();
 const filters = reactive({ rudder: '' });
 
 const columns = [
-  { title: 'Name', dataIndex: 'name', key: 'name' },
-  { title: 'Driver', dataIndex: 'driver', key: 'driver' },
-  { title: 'Mount', dataIndex: 'mountPoint', key: 'mountPoint' },
-  { title: 'Created', dataIndex: 'createdAt', key: 'createdAt', customRender: ({ text }: any) => formatDate(text) },
+	{ title: 'Name', dataIndex: 'name', key: 'name' },
+	{ title: 'Driver', dataIndex: 'driver', key: 'driver' },
+	{ title: 'Mount', dataIndex: 'mountPoint', key: 'mountPoint' },
+	{ title: 'Created', dataIndex: 'createdAt', key: 'createdAt', customRender: ({ text }: any) => formatDate(text) },
 ];
 
 const onRudderChange = (value: string) => {
-  filters.rudder = value;
-  volumes.getVolumes(filters.rudder || '');
+	filters.rudder = value;
+	volumes.getVolumes(filters.rudder || '');
 };
 
 onMounted(() => {
-  volumes.getVolumes();
-  rudders.getRudders();
+	volumes.getVolumes();
+	rudders.getRudders();
 });
 
 // choose default rudder
 watch(
-  () => rudders.rudders.length,
-  (len) => {
-    if (len > 0 && !filters.rudder) {
-      const preferred = rudders.onlineRudders.length ? rudders.onlineRudders[0] : rudders.rudders[0];
-      filters.rudder = preferred.id;
-      volumes.getVolumes(filters.rudder);
-    }
-  },
-  { immediate: true }
+	() => rudders.rudders.length,
+	(len) => {
+		if (len > 0 && !filters.rudder) {
+			const preferred = rudders.onlineRudders.length ? rudders.onlineRudders[0] : rudders.rudders[0];
+			filters.rudder = preferred.id;
+			volumes.getVolumes(filters.rudder);
+		}
+	},
+	{ immediate: true }
 );
 </script>

@@ -1,25 +1,28 @@
 <template>
-  <a-layout class="min-h-screen">
-    <a-layout-sider
-      v-model:collapsed="ui.sidebarCollapsed"
-      collapsible
-      class="bg-[var(--color-surface)] border-r border-[var(--color-border)]"
-      width="240"
-    >
-      <div class="h-16 flex items-center justify-center gap-2 px-4 text-[var(--color-text)] font-semibold border-b border-[var(--color-border)]">
-        <span class="text-xl">⚓</span>
-        <span v-if="!ui.sidebarCollapsed" class="text-sm truncate">Nakhoda</span>
-      </div>
-      <SidebarNav />
-    </a-layout-sider>
+	<a-layout class="min-h-screen">
+		<a-layout-sider
+			v-model:collapsed="ui.sidebarCollapsed"
+			collapsible
+			class="bg-[var(--color-surface)] border-r border-[var(--color-border)]"
+			width="240"
+		>
+			<div class="h-16 flex items-center justify-center gap-2 px-4 text-[var(--color-text)] font-semibold border-b border-[var(--color-border)]">
+				<span class="text-xl">⚓</span>
+				<span
+					v-if="!ui.sidebarCollapsed"
+					class="text-sm truncate"
+				>Nakhoda</span>
+			</div>
+			<SidebarNav />
+		</a-layout-sider>
 
-    <a-layout>
-      <TopBar />
-      <a-layout-content class="p-6 bg-[var(--color-bg)]">
-        <slot />
-      </a-layout-content>
-    </a-layout>
-  </a-layout>
+		<a-layout>
+			<TopBar />
+			<a-layout-content class="p-6 bg-[var(--color-bg)]">
+				<slot />
+			</a-layout-content>
+		</a-layout>
+	</a-layout>
 </template>
 
 <script setup lang="ts">
@@ -34,27 +37,27 @@ const { connect } = useWebSocket();
 
 // Apply theme on mount
 const applyTheme = () => {
-  document.documentElement.setAttribute('data-theme', ui.theme);
+	document.documentElement.setAttribute('data-theme', ui.theme);
 };
 
 onMounted(() => {
-  // Apply theme from localStorage if present (ensure theme reflects cached settings immediately)
-  try {
-    const raw = localStorage.getItem('settings');
-    if (raw) {
-      const s = JSON.parse(raw);
-      if (s?.theme) ui.setTheme(s.theme);
-    }
-  } catch (e) {
-    // ignore
-  }
-  applyTheme();
-  connect();
+	// Apply theme from localStorage if present (ensure theme reflects cached settings immediately)
+	try {
+		const raw = localStorage.getItem('settings');
+		if (raw) {
+			const s = JSON.parse(raw);
+			if (s?.theme) ui.setTheme(s.theme);
+		}
+	} catch (_e) {
+		// ignore
+	}
+	applyTheme();
+	connect();
 });
 
 // Watch for theme changes
 watch(() => ui.theme, () => {
-  applyTheme();
+	applyTheme();
 });
 </script>
 

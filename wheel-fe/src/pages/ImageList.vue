@@ -1,35 +1,79 @@
 <template>
-  <div class="page px-6 py-6">
-    <div class="flex flex--between items-center">
-      <div class="page__title text-2xl font-semibold mb-0">Images</div>
-      <a-button type="primary" @click="showPullModal = true">Pull Image</a-button>
-    </div>
+	<div class="page px-6 py-6">
+		<div class="flex flex--between items-center">
+			<div class="page__title text-2xl font-semibold mb-0">
+				Images
+			</div>
+			<a-button
+				type="primary"
+				@click="showPullModal = true"
+			>
+				Pull Image
+			</a-button>
+		</div>
 
-    <a-card class="filters-card">
-      <a-form layout="inline" class="filters-form">
-        <a-form-item label="Server">
-          <a-select v-model:value="filters.rudder" placeholder="Server" allowClear @change="onRudderChange" style="width: 200px">
-            <a-select-option v-for="r in rudders.rudders" :key="r.id" :value="r.id">{{ r.hostname || r.id }}</a-select-option>
-          </a-select>
-        </a-form-item>
-      </a-form>
-    </a-card> 
+		<a-card class="filters-card">
+			<a-form
+				layout="inline"
+				class="filters-form"
+			>
+				<a-form-item label="Server">
+					<a-select
+						v-model:value="filters.rudder"
+						placeholder="Server"
+						allow-clear
+						@change="onRudderChange"
+						style="width: 200px"
+					>
+						<a-select-option
+							v-for="r in rudders.rudders"
+							:key="r.id"
+							:value="r.id"
+						>
+							{{ r.hostname || r.id }}
+						</a-select-option>
+					</a-select>
+				</a-form-item>
+			</a-form>
+		</a-card> 
 
-    <a-table :columns="columns" :data-source="images.images" :loading="images.loading" row-key="id" />
+		<a-table
+			:columns="columns"
+			:data-source="images.images"
+			:loading="images.loading"
+			row-key="id"
+		/>
 
-    <a-modal v-model:open="showPullModal" title="Pull Image" @ok="handlePull">
-      <a-form layout="vertical">
-        <a-form-item label="Rudder ID">
-          <a-select v-model:value="pullForm.rudder_id" placeholder="Server" allowClear>
-            <a-select-option v-for="r in rudders.rudders" :key="r.id" :value="r.id">{{ r.hostname || r.id }}</a-select-option>
-          </a-select>
-        </a-form-item>
-        <a-form-item label="Image">
-          <a-input v-model:value="pullForm.image" placeholder="redis:latest" />
-        </a-form-item>
-      </a-form>
-    </a-modal>
-  </div>
+		<a-modal
+			v-model:open="showPullModal"
+			title="Pull Image"
+			@ok="handlePull"
+		>
+			<a-form layout="vertical">
+				<a-form-item label="Rudder ID">
+					<a-select
+						v-model:value="pullForm.rudder_id"
+						placeholder="Server"
+						allow-clear
+					>
+						<a-select-option
+							v-for="r in rudders.rudders"
+							:key="r.id"
+							:value="r.id"
+						>
+							{{ r.hostname || r.id }}
+						</a-select-option>
+					</a-select>
+				</a-form-item>
+				<a-form-item label="Image">
+					<a-input
+						v-model:value="pullForm.image"
+						placeholder="redis:latest"
+					/>
+				</a-form-item>
+			</a-form>
+		</a-modal>
+	</div>
 </template>
 
 <script setup lang="ts">
@@ -42,46 +86,46 @@ const images = useImages();
 const rudders = useRudders();
 const showPullModal = ref(false);
 const pullForm = reactive({
-  rudder_id: '',
-  image: '',
+	rudder_id: '',
+	image: '',
 });
 
 const filters = reactive({ rudder: '' });
 
 const columns = [
-  { title: 'Repo', dataIndex: 'repo', key: 'repo' },
-  { title: 'Tag', dataIndex: 'tag', key: 'tag' },
-  { title: 'Size', dataIndex: 'size', key: 'size', customRender: ({ text }: any) => formatBytes(text) },
-  { title: 'Created', dataIndex: 'createdAt', key: 'createdAt', customRender: ({ text }: any) => formatDate(text) },
+	{ title: 'Repo', dataIndex: 'repo', key: 'repo' },
+	{ title: 'Tag', dataIndex: 'tag', key: 'tag' },
+	{ title: 'Size', dataIndex: 'size', key: 'size', customRender: ({ text }: any) => formatBytes(text) },
+	{ title: 'Created', dataIndex: 'createdAt', key: 'createdAt', customRender: ({ text }: any) => formatDate(text) },
 ];
 
 const handlePull = async () => {
-  await images.pullImage(pullForm);
-  showPullModal.value = false;
-  images.getImages(filters.rudder || '');
+	await images.pullImage(pullForm);
+	showPullModal.value = false;
+	images.getImages(filters.rudder || '');
 };
 
 const onRudderChange = (value: string) => {
-  filters.rudder = value;
-  images.getImages(filters.rudder || '');
+	filters.rudder = value;
+	images.getImages(filters.rudder || '');
 };
 
 onMounted(() => {
-  images.getImages();
-  rudders.getRudders();
+	images.getImages();
+	rudders.getRudders();
 });
 
 // Choose default rudder when available
 watch(
-  () => rudders.rudders.length,
-  (len) => {
-    if (len > 0 && !filters.rudder) {
-      const preferred = rudders.onlineRudders.length ? rudders.onlineRudders[0] : rudders.rudders[0];
-      filters.rudder = preferred.id;
-      pullForm.rudder_id = preferred.id;
-      images.getImages(filters.rudder);
-    }
-  },
-  { immediate: true }
+	() => rudders.rudders.length,
+	(len) => {
+		if (len > 0 && !filters.rudder) {
+			const preferred = rudders.onlineRudders.length ? rudders.onlineRudders[0] : rudders.rudders[0];
+			filters.rudder = preferred.id;
+			pullForm.rudder_id = preferred.id;
+			images.getImages(filters.rudder);
+		}
+	},
+	{ immediate: true }
 );
 </script>

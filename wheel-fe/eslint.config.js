@@ -1,5 +1,61 @@
 import js from '@eslint/js'
 import pluginVue from 'eslint-plugin-vue'
+import tsParser from '@typescript-eslint/parser'
+import vueParser from 'vue-eslint-parser'
+import tsPlugin from '@typescript-eslint/eslint-plugin'
+
+const rules = {
+	'arrow-body-style': ['error', 'as-needed'],
+	'camelcase': 'off',
+	'indent': ['error', 'tab', { SwitchCase: 1 }],
+	'key-spacing': ['error', { beforeColon: false, afterColon: true }],
+	'no-console': 'off',
+	'no-debugger': 'off',
+	'no-empty':'off',
+	'no-multiple-empty-lines': ['error', { max: 1, maxEOF: 0, maxBOF: 0 }],
+	'no-param-reassign': 'off',
+	'no-undef': 'error',
+	'no-unused-vars': 'off',
+	'@typescript-eslint/no-unused-vars': ['error', { 
+		vars: 'all', 
+		args: 'after-used',
+		varsIgnorePattern: '^_',
+		argsIgnorePattern: '^_',
+		caughtErrorsIgnorePattern: '^_'
+	}],
+	'object-curly-spacing': ['error', 'always'],
+	'prefer-arrow-callback': 'error',
+	'prefer-const': 'error',
+	'prefer-template': 'error',
+	'space-infix-ops': ['error', { int32Hint: false }],
+	'symbol-description': 'off',
+	'vue/block-order': [
+		'error',
+		{
+			order: ['template', 'script', 'style']
+		}
+	],
+	'vue/html-indent': ['error', 'tab', {
+		attribute: 1,
+		baseIndent: 1,
+		closeBracket: 0,
+		alignAttributesVertically: true,
+		ignores: []
+	}],
+	'vue/multi-word-component-names': 'off',
+	'vue/no-unused-components': 'error',
+	'vue/no-unused-vars': 'off',
+	'vue/no-v-html': 'off'
+};
+
+const globals = {
+	console: 'readonly',
+	window: 'readonly',
+	document: 'readonly',
+	localStorage: 'readonly',
+	navigator: 'readonly',
+	fetch: 'readonly',
+};
 
 export default [
 	{
@@ -9,73 +65,42 @@ export default [
 			'dist/**', 
 			'build/**',
 			'vendor/**',
-			'cache/**'
+			'cache/**',
+			'*.config.{ts,js,cjs}',
 		]
 	},
   
 	js.configs.recommended,
 	...pluginVue.configs['flat/strongly-recommended'],
+	{
+		plugins: { '@typescript-eslint': tsPlugin }
+	},
+	{
+		files: ['**/*.vue'],
+		rules,
+		languageOptions: {
+			globals,
+			parser: vueParser,
+			parserOptions: {
+				parser: tsParser,
+				extraFileExtensions: ['.vue'],
+				project: './tsconfig.json'
+			}
+		}
+	},
   
 	{
-		files: ['**/*.{vue,js,ts}'],
+		files: ['**/*.{js,ts}'],
 		languageOptions: {
-			parser: '@typescript-eslint/parser',
+			globals,
+			parser: tsParser,
 			ecmaVersion: 'latest',
 			sourceType: 'module',
 			parserOptions: {
 				project: './tsconfig.json',
 				extraFileExtensions: ['.vue']
-			},
-			globals: {
-				console: 'readonly',
-				process: 'readonly',
-				__dirname: 'readonly',
-				__filename: 'readonly',
-				Buffer: 'readonly',
-				global: 'readonly'
 			}
 		},
-		rules: {
-		rules: {
-			'indent': ['error', 'tab', { SwitchCase: 1 }],
-			'vue/html-indent': ['error', 'tab', {
-				attribute: 1,
-				baseIndent: 1,
-				closeBracket: 0,
-				alignAttributesVertically: true,
-				ignores: []
-			}],
-			'vue/multi-word-component-names': 'off',
-			'no-console': 'off',
-			'no-debugger': 'off',
-			'camelcase': 'off',
-			'no-param-reassign': 'off',
-			'symbol-description': 'off',
-			'vue/no-v-html': 'off',
-			'prefer-const': 'error',
-			'prefer-arrow-callback': 'error',
-			'arrow-body-style': ['error', 'as-needed'],
-			'no-multiple-empty-lines': ['error', { max: 1, maxEOF: 0, maxBOF: 0 }],
-			'vue/no-unused-components': 'error',
-			'no-unused-vars': ['error', { 
-				vars: 'all', 
-				args: 'after-used',
-				varsIgnorePattern: '^_',
-				argsIgnorePattern: '^_'
-			}],
-			'vue/no-unused-vars': 'error',
-			'no-undef': 'error',
-			'prefer-template': 'error',
-			'vue/block-order': [
-				'error',
-				{
-					order: ['template', 'script', 'style']
-				}
-			],
-			'key-spacing': ['error', { beforeColon: false, afterColon: true }],
-			'object-curly-spacing': ['error', 'always']
-			,
-			'space-infix-ops': ['error', { int32Hint: false }]
-		}
+		rules
 	}
 ]

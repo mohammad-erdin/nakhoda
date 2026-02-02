@@ -6,125 +6,110 @@ import { useAuth } from './auth';
 import { useUI } from './ui';
 
 export type Settings = {
-  jobRetentionDays: number;
-  theme: 'light' | 'dark';
-  language: string;
+	jobRetentionDays: number;
+	theme: 'light' | 'dark';
+	language: string;
 };
 
 export const useSettings = defineStore('settings', () => {
-  const settings = ref<Settings | null>(null);
-  const loading = ref(false);
-  const error = ref<string | null>(null);
+	const settings = ref<Settings | null>(null);
+	const loading = ref(false);
+	const error = ref<string | null>(null);
 
-  // Load settings from localStorage if present
-  function loadFromLocalStorage() {
-    try {
-      const raw = localStorage.getItem('settings');
-      if (raw) {
-        settings.value = JSON.parse(raw) as Settings;
-        // apply theme immediately
-        try {
-          const ui = useUI();
-          if (settings.value?.theme) ui.setTheme(settings.value.theme);
-        } catch (e) {
-          // ignore
-        }
-        return true;
-      }
-    } catch (e) {
-      // ignore parse errors
-    }
-    return false;
-  }
+	// Helpers to centralize storage access and theme application
+	function settingGet<T>(key: string): T | null {
+		const raw = localStorage.getItem(key) ?? null;
+		return raw ? (JSON.parse(raw) as T) : null;
+	}
 
-  async function loadFromApi() {
-    loading.value = true;
-    error.value = null;
-    try {
-      const data = await apiGet<Settings>(API_ENDPOINTS.SETTINGS.GET);
-      settings.value = data;
-      // apply theme
-      try {
-        const ui = useUI();
-        if (data?.theme) ui.setTheme(data.theme);
-      } catch (e) {}
-      try {
-        localStorage.setItem('settings', JSON.stringify(data || {}));
-      } catch (e) {
-        // ignore
-      }
-      return data;
-    } catch (err) {
-      error.value = (err as Error).message;
-      throw err;
-    } finally {
-      loading.value = false;
-    }
-  }
+	function settingSet(key: string, value: unknown) {
+		localStorage.setItem(key, JSON.stringify(value));
+	}
 
-  async function saveToApi(partial: Partial<Settings>) {
-    loading.value = true;
-    error.value = null;
-    try {
-      const data = await apiPatch<Settings>(API_ENDPOINTS.SETTINGS.UPDATE, partial);
-      settings.value = data;
-      // apply theme
-      try {
-        const ui = useUI();
-        if (data?.theme) ui.setTheme(data.theme);
-      } catch (e) {}
-      // apply theme
-      try {
-        const ui = useUI();
-        if (data?.theme) ui.setTheme(data.theme);
-      } catch (e) {}
-      try {
-        localStorage.setItem('settings', JSON.stringify(data || {}));
-      } catch (e) {}
-      return data;
-    } catch (err) {
-      error.value = (err as Error).message;
-      throw err;
-    } finally {
-      loading.value = false;
-    }
-  }
+	function settingRemove(key: string) {
+		localStorage.removeItem(key);
+	}
 
-  // Initialize: read from localStorage; if missing and authenticated, fetch from API
-  const auth = useAuth();
-  const loadedFromLocal = loadFromLocalStorage();
+	function applyTheme(themeName?: 'light' | 'dark' | null) {
+		try {
+			const ui = useUI();
+			if (themeName) ui.setTheme(themeName);
+		} catch (_e) {
+		}
+	}
 
-  watch(
-    () => auth.checked,
-    async (checked) => {
-      if (!loadedFromLocal && checked && auth.isAuthenticated) {
-        try {
-          await loadFromApi();
-        } catch (e) {
-          // ignore
-        }
-      }
-    },
-    { immediate: true }
-  );
+	// Load settings from localStorage if present
+	function loadFromLocalStorage() {
+		const parsed = settingGet<Settings>('settings');
+		if (parsed) {
+			settings.value = parsed;
+			applyTheme(parsed.theme);
+			return true;
+		}
+		return false;
+	}
 
-  // Also load when user logs in
-  watch(
-    () => auth.isAuthenticated,
-    async (isAuth) => {
-      if (isAuth && !settings.value) {
-        try {
-          await loadFromApi();
-        } catch (e) {}
-      }
-      if (!isAuth) {
-        settings.value = null;
-        try {
-          localStorage.removeItem('settings');
-        } catch (e) {}
-      }
-    }
-  );
+	async function loadFromApi() {
+		loading.value = true;
+		error.value = null;
+		try {
+			const data = await apiGet<Settings>(API_ENDPOINTS.SETTINGS.GET);
+			settings.value = data;
+			applyTheme(data?.theme);
+			settingSet('settings', data || {});
+			return data;
+		} catch (err) {
+			error.value = (err as Error).message;
+			throw err;
+		} finally {
+			loading.value = false;
+		}
+	}
 
-  return { settings, loading, error, loadFromApi, loadFromLocalStorage, saveToApi };
+	async function saveToApi(partial: Partial<Settings>) {
+		loading.value = true;
+		error.value = null;
+		try {
+			const data = await apiPatch<Settings>(API_ENDPOINTS.SETTINGS.UPDATE, partial);
+			settings.value = data;
+			applyTheme(data?.theme);
+			settingSet('settings', data || {});
+			return data;
+		} catch (err) {
+			error.value = (err as Error).message;
+			throw err;
+		} finally {
+			loading.value = false;
+		}
+	}
+
+	// Initialize: read from localStorage; if missing and authenticated, fetch from API
+	const auth = useAuth();
+	const loadedFromLocal = loadFromLocalStorage();
+
+	watch(
+		() => auth.checked,
+		async (checked) => {
+			if (!loadedFromLocal && checked && auth.isAuthenticated) {
+				await loadFromApi();
+			}
+		},
+		{ immediate: true }
+	);
+
+	// Also load when user logs in
+	watch(
+		() => auth.isAuthenticated,
+		async (isAuth) => {
+			if (isAuth && !settings.value) {
+				await loadFromApi();
+				if (!isAuth) {
+					settings.value = null;
+					settingRemove('settings');
+				}
+			}
+		}
+	);
+
+	return { settings, loading, error, loadFromApi, loadFromLocalStorage, saveToApi };
 });
