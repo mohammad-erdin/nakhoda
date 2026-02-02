@@ -209,6 +209,55 @@ body {
   color: var(--color-primary) !important;
 }
 
+/* Improve Modal Confirm readability in dark theme */
+.ant-modal-confirm-body-wrapper {
+  color: var(--color-text) !important;
+}
+
+.ant-modal-confirm-title {
+  color: var(--color-text) !important;
+  font-weight: 600;
+}
+
+.ant-modal-confirm-content {
+  color: var(--color-muted) !important;
+}
+
+/* Inputs inside modal confirm */
+.ant-modal-confirm-body-wrapper input {
+  background: var(--color-surface-alt) !important;
+  border: 1px solid var(--color-border) !important;
+  color: var(--color-text) !important;
+  padding: 8px !important;
+  border-radius: 6px !important;
+}
+
+.ant-modal-confirm-body-wrapper input::placeholder {
+  color: var(--color-muted) !important;
+}
+
+/* Confirm buttons */
+.ant-modal-confirm-btns .ant-btn-default {
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+  background: transparent !important;
+}
+
+.ant-modal-confirm-btns .ant-btn-default:hover {
+  color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+}
+
+.ant-modal-confirm-btns .ant-btn-primary {
+  background: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: #fff !important;
+}
+
+.ant-modal-confirm-body {
+  padding-bottom: 12px !important;
+}
+
 .ant-btn-default {
   color: var(--color-text) !important;
   border-color: var(--color-border) !important;
