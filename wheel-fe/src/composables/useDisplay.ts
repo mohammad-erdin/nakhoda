@@ -1,44 +1,38 @@
 import { ref, watch } from 'vue';
 import { useMediaQuery } from '@vueuse/core';
-import type { Ref } from 'vue';
+import { useSettings } from '@/stores/settings';
 
-export const APP_BREAKPOINT = '(max-width: 768px)';
+const isDark = ref<boolean>(true);
+const isMobile = ref<boolean>(false);
 
-export function isMobile(): Ref<boolean> {
-	return useMediaQuery(APP_BREAKPOINT);
-}
+export function useDisplay() {
+	const APP_BREAKPOINT = '(max-width: 768px)';
+	const st = useSettings();
+	const theme = st.getSetting('theme');
+	
+	// isDark initial value
+	isDark.value = theme === 'dark' || (theme === null && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
-export function isDarkTheme(): Ref<boolean> {
-	const prefersDark = useMediaQuery('(prefers-color-scheme: dark)');
-	const theme = ref<boolean>(false);
+	// apply initial document class so Tailwind's class-based dark variant works in CSS
+	if (typeof document !== 'undefined') {
+		document.documentElement.classList.toggle('dark', isDark.value);
+	}
 
-	try {
-		const raw = typeof window !== 'undefined' && localStorage ? localStorage.getItem('settings') : null;
-		if (raw) {
-			const parsed = JSON.parse(raw);
-			const t = parsed?.setting?.theme;
-			if (t === 'dark') {
-				theme.value = true;
-				return theme;
-			}
-			if (t === 'light') {
-				theme.value = false;
-				return theme;
-			}
+	// isMobile initial value
+	const mq = useMediaQuery(APP_BREAKPOINT);
+	watch(mq, (v) => { isMobile.value = v; }, { immediate: true });
+	
+	function toggleTheme() {
+		isDark.value = !isDark.value;
+		st.setSetting('theme', isDark.value ? 'dark' : 'light');
+		if (typeof document !== 'undefined') {
+			document.documentElement.classList.toggle('dark', isDark.value);
 		}
-	} catch { }
+	}
 
-	theme.value = prefersDark.value;
-	try {
-		localStorage.setItem('settings', JSON.stringify({ setting: { theme: theme.value ? 'dark' : 'light' } }));
-	} catch { }
-
-	watch(prefersDark, (val) => {
-		theme.value = val;
-		try {
-			localStorage.setItem('settings', JSON.stringify({ setting: { theme: val ? 'dark' : 'light' } }));
-		} catch { }
-	});
-
-	return theme;
+	return {
+		isDark,
+		isMobile,
+		toggleTheme,
+	};
 }

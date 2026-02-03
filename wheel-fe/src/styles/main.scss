@@ -1,5 +1,6 @@
 @use 'font';
 @use 'tailwindcss';
+@custom-variant dark (&:where(.dark, .dark *));
 
 html,
 body,

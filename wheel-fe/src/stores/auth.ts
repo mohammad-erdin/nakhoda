@@ -18,7 +18,6 @@ export const useAuth = defineStore('auth', () => {
 	const isAuthenticated = computed(() => !!token.value);
 	const checked = ref(false);
 
-	// Dedupe in-flight checkAuth calls
 	let checkAuthPromise: Promise<boolean> | null = null;
 
 	const login = async (username: string, password: string) => {
@@ -32,7 +31,6 @@ export const useAuth = defineStore('auth', () => {
 			token.value = data.sessionToken || 'auth-token';
 			user.value = data.user;
 			localStorage.setItem('auth_token', token.value);
-			// fetch settings after login
 			await checkAuth();
 		} catch (err) {
 			error.value = (err as Error).message;
