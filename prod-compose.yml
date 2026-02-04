@@ -64,6 +64,11 @@ services:
       RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS:-60000}
       RATE_LIMIT_MAX: ${RATE_LIMIT_MAX:-100}
       LOG_FORMAT: ${LOG_FORMAT:-}
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - nakhoda-network
     restart: unless-stopped
 
 volumes:
