@@ -67,6 +67,4 @@ export const config = {
   logFormat: getEnv('LOG_FORMAT', ''),
 } as const;
 
-console.info(config);
-
 export type Config = typeof config;
