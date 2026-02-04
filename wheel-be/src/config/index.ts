@@ -52,8 +52,9 @@ export const config = {
     timeoutMs: getEnvNumber('JOB_TIMEOUT_MS', 300000),
   },
 
+  // Accept a comma-separated list of allowed origins (e.g. "http://localhost:5173,http://localhost:5174")
   cors: {
-    origin: getEnv('CORS_ORIGIN', 'http://localhost:5173'),
+    origin: getEnv('CORS_ORIGIN', 'http://localhost:5173').split(',').map(s => s.trim()).filter(Boolean),
   },
 
   rateLimit: {
