@@ -1,0 +1,136 @@
+services:
+  # postgres:
+  #   image: postgres:16-alpine
+  #   container_name: nakhoda-postgres
+  #   environment:
+  #     POSTGRES_USER: ${DB_USER:-nakhoda}
+  #     POSTGRES_PASSWORD: ${DB_PASSWORD:-nakhoda}
+  #     POSTGRES_DB: ${DB_NAME:-nakhoda}
+  #     POSTGRES_INITDB_ARGS: "--encoding=UTF8"
+  #   ports:
+  #     - "0.0.0.0:${DB_PORT:-5432}:5432"
+  #   volumes:
+  #     - ./postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql
+  #     - postgres_data:/var/lib/postgresql/data
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-nakhoda} -d ${DB_NAME:-nakhoda}"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   networks:
+  #     - nakhoda-network
+  #   restart: unless-stopped
+
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: nakhoda-redis
+  #   command: redis-server --appendonly yes
+  #   ports:
+  #     - "0.0.0.0:${REDIS_PORT:-6379}:6379"
+  #   volumes:
+  #     - redis_data:/data
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   networks:
+  #     - nakhoda-network
+  #   restart: unless-stopped
+
+  # wheel-be:
+  #   build:
+  #     context: .
+  #     dockerfile: wheel-be/Dockerfile
+  #   container_name: nakhoda-wheel-be
+  #   environment:
+  #     NODE_ENV: ${NODE_ENV:-development}
+  #     PORT: ${PORT:-3000}
+  #     WS_PORT: ${WS_PORT:-8080}
+  #     DB_HOST: postgres
+  #     DB_PORT: 5432
+  #     DB_USER: ${DB_USER:-nakhoda}
+  #     DB_PASSWORD: ${DB_PASSWORD:-nakhoda}
+  #     DB_NAME: ${DB_NAME:-nakhoda}
+  #     REDIS_HOST: redis
+  #     REDIS_PORT: 6379
+  #     JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
+  #     JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-24h}
+  #     RUDDER_TOKENS: ${RUDDER_TOKENS:-rudder_token_1,rudder_token_2}
+  #     JOB_RETENTION_DAYS: ${JOB_RETENTION_DAYS:-30}
+  #     JOB_TIMEOUT_MS: ${JOB_TIMEOUT_MS:-300000}
+  #     CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
+  #     RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS:-60000}
+  #     RATE_LIMIT_MAX: ${RATE_LIMIT_MAX:-100}
+  #     LOG_FORMAT: ${LOG_FORMAT:-}
+  #   ports:
+  #     - "0.0.0.0:${PORT:-3000}:3000"
+  #   volumes:
+  #     - ./wheel-be/src:/app/src
+  #     - ./shared:/app/shared
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
+  #   networks:
+  #     - nakhoda-network
+  #   restart: unless-stopped
+  #   command: npm run dev
+
+  wheel-fe:
+    build:
+      context: .
+      dockerfile: wheel-fe/Dockerfile
+    container_name: nakhoda-wheel-fe
+    environment:
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:3000}
+      VITE_WS_URL: ${VITE_WS_URL:-ws://localhost:3000}
+    ports:
+      - "0.0.0.0:${VITE_PORT:-5174}:5173"
+    volumes:
+      - ./wheel-fe/src:/app/src
+      - ./wheel-fe/index.html:/app/index.html
+      - ./shared:/app/shared
+    # depends_on:
+    #   - wheel-be
+    networks:
+      - nakhoda-network
+    restart: unless-stopped
+    # command: npm run dev
+
+  # rudder-1:
+  #   build:
+  #     context: .
+  #     dockerfile: rudder/Dockerfile.dev
+  #   container_name: nakhoda-rudder-1
+  #   environment:
+  #     WHEEL_URL: ${RUDDER_WHEEL_URL:-ws://wheel-be:3000}
+  #     RUDDER_ID: ${RUDDER_1_ID:-rudder_1}
+  #     RUDDER_TOKEN: ${RUDDER_1_TOKEN:-rudder_token_1}
+  #     RUDDER_HOSTNAME: ${RUDDER_1_HOSTNAME:-rudder-1}
+  #     HEARTBEAT_INTERVAL_MS: ${HEARTBEAT_INTERVAL_MS:-30000}
+  #     RECONNECT_MAX_DELAY_MS: ${RECONNECT_MAX_DELAY_MS:-60000}
+  #     RUDDER_OFFLINE_THRESHOLD_MS: ${RUDDER_OFFLINE_THRESHOLD_MS:-90000}
+  #     LOG_LEVEL: ${LOG_LEVEL:-info}
+  #   volumes:
+  #     - ./rudder/src:/app/src
+  #     - ./shared:/app/shared
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   depends_on:
+  #     - wheel-be
+  #   networks:
+  #     - nakhoda-network
+  #   restart: unless-stopped
+  #   command: npm run dev
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  nakhoda-network:
+    driver: bridge
