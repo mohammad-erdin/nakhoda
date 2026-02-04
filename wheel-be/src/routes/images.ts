@@ -1,11 +1,12 @@
 import { Router, Request, Response, NextFunction } from 'express';
+import type { Router as RouterType } from 'express';
 import { ImageService, AuditLogService } from '../services/index.js';
 import { authMiddleware } from '../middleware/auth.js';
 import { pullImageSchema, paginationSchema } from '../utils/validation.js';
 import * as cache from '../cache/index.js';
 import { BadRequestError } from '../utils/errors.js';
 
-const router = Router();
+const router: RouterType = Router();
 
 // List all images
 router.get('/', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {

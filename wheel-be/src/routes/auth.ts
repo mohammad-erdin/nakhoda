@@ -1,8 +1,9 @@
 import { Router, Request, Response, NextFunction } from 'express';
+import type { Router as RouterType } from 'express';
 import { AuthService } from '../services/index.js';
 import { loginSchema } from '../utils/validation.js';
 
-const router = Router();
+const router: RouterType = Router();
 
 router.post('/login', async (req: Request, res: Response, next: NextFunction) => {
   try {

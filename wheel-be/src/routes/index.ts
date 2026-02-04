@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import type { Router as RouterType } from 'express';
 import authRoutes from './auth.js';
 import ruddersRoutes from './rudders.js';
 import containersRoutes from './containers.js';
@@ -8,7 +9,7 @@ import jobsRoutes from './jobs.js';
 import auditLogsRoutes from './auditLogs.js';
 import settingsRoutes from './settings.js';
 
-const router = Router();
+const router: RouterType = Router();
 
 router.use('/auth', authRoutes);
 router.use('/rudders', ruddersRoutes);

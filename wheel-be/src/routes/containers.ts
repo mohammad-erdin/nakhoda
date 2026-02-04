@@ -1,4 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
+import type { Router as RouterType } from 'express';
 import { ContainerService, AuditLogService } from '../services/index.js';
 import { authMiddleware } from '../middleware/auth.js';
 import { createContainerSchema, containerFilterSchema, paginationSchema } from '../utils/validation.js';
@@ -6,7 +7,7 @@ import * as cache from '../cache/index.js';
 import { BadRequestError } from '../utils/errors.js';
 import { getIO } from '../websocket/index.js';
 
-const router = Router();
+const router: RouterType = Router();
 
 // Helper: ask a rudder for its containers and wait briefly for cache to populate
 async function requestContainersFromRudder(rudderId: string, timeout = 2000): Promise<unknown[] | null> {

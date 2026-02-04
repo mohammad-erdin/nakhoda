@@ -1,0 +1,21 @@
+services:
+  wheel:
+    build:
+      context: .
+      dockerfile: wheel-be/Dockerfile.prod
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      # Add other environment variables (DB, REDIS, etc) as needed or use an env_file
+    restart: unless-stopped
+
+  # Add other production services here (postgres, redis) or deploy them separately
+  # postgres:
+  #   image: postgres:15
+  #   environment:
+  #     POSTGRES_DB: yourdb
+  #     POSTGRES_USER: user
+  #     POSTGRES_PASSWORD: pass
+  # redis:
+  #   image: redis:7

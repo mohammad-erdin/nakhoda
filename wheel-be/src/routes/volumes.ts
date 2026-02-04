@@ -1,10 +1,11 @@
 import { Router, Request, Response, NextFunction } from 'express';
+import type { Router as RouterType } from 'express';
 import { VolumeService, AuditLogService } from '../services/index.js';
 import { authMiddleware } from '../middleware/auth.js';
 import { createVolumeSchema, paginationSchema } from '../utils/validation.js';
 import { BadRequestError } from '../utils/errors.js';
 
-const router = Router();
+const router: RouterType = Router();
 
 // List all volumes
 router.get('/', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {

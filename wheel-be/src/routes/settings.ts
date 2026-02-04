@@ -1,9 +1,10 @@
 import { Router, Request, Response, NextFunction } from 'express';
+import type { Router as RouterType } from 'express';
 import { authMiddleware } from '../middleware/auth.js';
 import { settingsUpdateSchema } from '../utils/validation.js';
 import { config } from '../config/index.js';
 
-const router = Router();
+const router: RouterType = Router();
 
 // In-memory settings storage (in production, this would be in the database)
 const userSettings: Map<string, { jobRetentionDays: number; theme: 'light' | 'dark'; language: string }> = new Map();

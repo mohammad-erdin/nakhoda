@@ -1,10 +1,11 @@
 import { Router, Request, Response, NextFunction } from 'express';
+import type { Router as RouterType } from 'express';
 import { AuditLogService } from '../services/index.js';
 import { authMiddleware } from '../middleware/auth.js';
 import { paginationSchema } from '../utils/validation.js';
 import { z } from 'zod';
 
-const router = Router();
+const router: RouterType = Router();
 
 const auditLogFilterSchema = z.object({
   rudder_id: z.string().optional(),

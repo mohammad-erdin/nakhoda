@@ -1,9 +1,10 @@
 import { Router, Request, Response, NextFunction } from 'express';
+import type { Router as RouterType } from 'express';
 import { JobService } from '../services/index.js';
 import { authMiddleware } from '../middleware/auth.js';
 import { jobFilterSchema, paginationSchema } from '../utils/validation.js';
 
-const router = Router();
+const router: RouterType = Router();
 
 // List all jobs
 router.get('/', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {

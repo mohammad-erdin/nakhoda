@@ -1,0 +1,57 @@
+# Multi-stage Dockerfile for production
+# Stage 1: Builder
+FROM node:20-alpine AS builder
+
+# app
+WORKDIR /app
+COPY shared shared
+RUN npm install -g pnpm
+RUN pnpm config set store-dir ~/.pnpm --global
+
+# Build frontend
+WORKDIR /app/fe
+COPY wheel-fe/package.json ./
+COPY wheel-fe/src ./src
+COPY wheel-fe/tsconfig.json ./
+COPY wheel-fe/tsconfig.node.json ./
+COPY wheel-fe/vite.config.ts ./
+COPY wheel-fe/postcss.config.cjs ./
+COPY wheel-fe/tailwind.config.cjs ./
+COPY wheel-fe/index.html ./
+RUN pnpm install && pnpm run build
+
+# Build backend
+WORKDIR /app/be
+COPY wheel-be/package.json ./
+COPY wheel-be/tsconfig.json ./
+COPY wheel-be/src ./src
+RUN pnpm install && npm rebuild bcrypt || true
+# RUN pnpm run build 
+
+# WORKDIR /app
+
+
+# Copy frontend build into backend dist public folder
+# RUN mkdir -p be/public && cp -r fe/dist/* be/public/
+
+# # Build backend (tsc)
+# WORKDIR /app/wheel-be
+# RUN pnpm run build
+
+# # Install production-only backend deps to keep final image small
+# RUN pnpm install --prod
+
+
+# # Stage 2: Runtime
+# FROM node:20-alpine AS runtime
+# WORKDIR /app
+
+# # Copy built backend and production deps
+# COPY --from=builder /app/wheel-be/package.json ./package.json
+# COPY --from=builder /app/wheel-be/dist ./dist
+# COPY --from=builder /app/wheel-be/node_modules ./node_modules
+
+# EXPOSE 3000
+# ENV NODE_ENV=production
+
+# CMD ["node", "dist/server.js"]

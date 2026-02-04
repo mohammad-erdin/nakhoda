@@ -1,8 +1,9 @@
 import { Router, Request, Response, NextFunction } from 'express';
+import type { Router as RouterType } from 'express';
 import { RudderService } from '../services/index.js';
 import { authMiddleware } from '../middleware/auth.js';
 
-const router = Router();
+const router: RouterType = Router();
 
 // List all rudders
 router.get('/', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {

@@ -41,7 +41,7 @@ services:
   wheel-be:
     build:
       context: .
-      dockerfile: wheel-be/Dockerfile
+      dockerfile: wheel-be/Dockerfile.dev
     container_name: nakhoda-wheel-be
     environment:
       NODE_ENV: ${NODE_ENV:-development}
@@ -93,8 +93,6 @@ services:
       - ./wheel-fe/src:/app/src
       - ./wheel-fe/index.html:/app/index.html
       - ./shared:/app/shared
-    # depends_on:
-    #   - wheel-be
     networks:
       - nakhoda-network
     restart: unless-stopped
