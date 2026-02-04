@@ -1,4 +1,43 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: nakhoda-postgres
+    environment:
+      POSTGRES_USER: ${DB_USER:-nakhoda}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-nakhoda}
+      POSTGRES_DB: ${DB_NAME:-nakhoda}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8"
+    ports:
+      - "0.0.0.0:${DB_PORT:-5432}:5432"
+    volumes:
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-nakhoda} -d ${DB_NAME:-nakhoda}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - nakhoda-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: nakhoda-redis
+    command: redis-server --appendonly yes
+    ports:
+      - "0.0.0.0:${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - nakhoda-network
+    restart: unless-stopped
+
   wheel:
     build:
       context: .
@@ -6,16 +45,33 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=production
-      # Add other environment variables (DB, REDIS, etc) as needed or use an env_file
+      NODE_ENV: production
+      PORT: ${PORT:-3000}
+      WS_PORT: ${WS_PORT:-8080}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-nakhoda}
+      DB_PASSWORD: ${DB_PASSWORD:-nakhoda}
+      DB_NAME: ${DB_NAME:-nakhoda}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: ${JWT_SECRET:-}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-24h}
+      RUDDER_TOKENS: ${RUDDER_TOKENS:-}
+      JOB_RETENTION_DAYS: ${JOB_RETENTION_DAYS:-30}
+      JOB_TIMEOUT_MS: ${JOB_TIMEOUT_MS:-300000}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173,http://localhost:5174,http://127.0.0.1:5173,http://127.0.0.1:5174,http://[::1]:5173,http://[::1]:5174}
+      RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS:-60000}
+      RATE_LIMIT_MAX: ${RATE_LIMIT_MAX:-100}
+      LOG_FORMAT: ${LOG_FORMAT:-}
     restart: unless-stopped
 
-  # Add other production services here (postgres, redis) or deploy them separately
-  # postgres:
-  #   image: postgres:15
-  #   environment:
-  #     POSTGRES_DB: yourdb
-  #     POSTGRES_USER: user
-  #     POSTGRES_PASSWORD: pass
-  # redis:
-  #   image: redis:7
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  nakhoda-network:
+    driver: bridge
