@@ -20,6 +20,9 @@ redis.on('error', (err: Error) => {
   logger.error('Redis connection error', { error: err.message });
 });
 
+// Guard to ensure redis is only quit once
+let redisClosed = false;
+
 // Rudder session keys
 const RUDDER_SESSION_PREFIX = 'rudder:';
 const RUDDER_SESSION_SUFFIX = ':session';
@@ -127,6 +130,15 @@ export async function testConnection(): Promise<boolean> {
 }
 
 export async function closeRedis(): Promise<void> {
-  await redis.quit();
-  logger.info('Redis connection closed');
-}
+  if (redisClosed) {
+    logger.info('Redis connection already closed');
+    return;
+  }
+  redisClosed = true;
+  try {
+    await redis.quit();
+    logger.info('Redis connection closed');
+  } catch (error) {
+    logger.error('Error closing Redis connection', { error: (error as Error).message });
+  }
+} 

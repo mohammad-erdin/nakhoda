@@ -25,27 +25,37 @@ async function startServer(): Promise<void> {
   });
 
   // Graceful shutdown
-    const shutdown = async (signal: string): Promise<void> => {
-      logger.info(`${signal} received, shutting down gracefully...`);
-  
-      stopCleanupScheduler();
-  
-      server.close(async () => {
-        logger.info('HTTP server closed');
+  let isShuttingDown = false;
+  const shutdown = async (signal: string): Promise<void> => {
+    if (isShuttingDown) {
+      return;
+    }
+    isShuttingDown = true;
+    logger.info(`\r${signal} received, shutting down gracefully...`);
+
+    stopCleanupScheduler();
+
+    server.close(async () => {
+      logger.info('HTTP server closed');
+      try {
         await closePool();
         await closeRedis();
+      } catch (error) {
+        logger.error('Error during shutdown', { error: (error as Error).message });
+      } finally {
         process.exit(0);
-      });
-  
-      // Force shutdown after 10 seconds
-      setTimeout(() => {
-        logger.error('Forced shutdown after timeout');
-        process.exit(1);
-      }, 10000);
-    };
-  
-    process.on('SIGTERM', () => shutdown('SIGTERM'));
-    process.on('SIGINT', () => shutdown('SIGINT'));
+      }
+    });
+
+    // Force shutdown after 10 seconds
+    setTimeout(() => {
+      logger.error('Forced shutdown after timeout');
+      process.exit(1);
+    }, 10000);
+  };
+
+  process.on('SIGTERM', () => shutdown('SIGTERM'));
+  process.on('SIGINT', () => shutdown('SIGINT'));
 }
 
 startServer().catch((error) => {

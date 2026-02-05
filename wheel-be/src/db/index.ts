@@ -19,6 +19,9 @@ pool.on('error', (err) => {
   logger.error('Unexpected database pool error', { error: err.message });
 });
 
+// Guard to ensure we only end the pool once
+let poolClosed = false;
+
 export async function query<T extends pg.QueryResultRow>(text: string, params?: unknown[]): Promise<pg.QueryResult<T>> {
   const start = Date.now();
   try {
@@ -30,7 +33,7 @@ export async function query<T extends pg.QueryResultRow>(text: string, params?: 
     logger.error('Database query error', { text, error: (error as Error).message });
     throw error;
   }
-}
+} 
 
 export async function getClient(): Promise<pg.PoolClient> {
   const client = await pool.connect();
@@ -66,6 +69,15 @@ export async function testConnection(): Promise<boolean> {
 }
 
 export async function closePool(): Promise<void> {
-  await pool.end();
-  logger.info('Database pool closed');
-}
+  if (poolClosed) {
+    logger.info('Database pool already closed');
+    return;
+  }
+  poolClosed = true;
+  try {
+    await pool.end();
+    logger.info('Database pool closed');
+  } catch (error) {
+    logger.error('Error closing database pool', { error: (error as Error).message });
+  }
+} 
