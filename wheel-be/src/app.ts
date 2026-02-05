@@ -5,7 +5,7 @@ import {
   // corsMiddleware,
   // loggingMiddleware,
   // rateLimitMiddleware,
-  errorMiddleware,
+  // errorMiddleware,
   notFoundMiddleware,
 } from './middleware/index.js';
 
@@ -15,12 +15,11 @@ const app: Express = express();
 app.set('trust proxy', 1);
 
 // Middleware
-app.use(express.json());
+// app.use(express.json());
 // app.use(corsMiddleware);
 // app.use(loggingMiddleware);
 // app.use('/api', rateLimitMiddleware);
-app.use(errorMiddleware);
-
+// app.use(errorMiddleware);
 
 // Health check endpoint
 app.get('/health', (_req, res) => res.send('ok')); 

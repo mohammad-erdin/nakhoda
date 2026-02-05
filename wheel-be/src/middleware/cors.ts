@@ -3,8 +3,6 @@ import { config } from '../config/index.js';
 import { logger } from '../utils/logger.js';
 
 const allowedOrigins = Array.isArray(config.cors.origin) ? config.cors.origin : [config.cors.origin];
-logger.info('CORS allowed origins', { origins: allowedOrigins });
-
 export const corsMiddleware = cors({
   origin: (origin, callback) => {
     logger.debug('CORS origin check', { origin, allowedOrigins });
