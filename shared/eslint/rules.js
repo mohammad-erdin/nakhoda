@@ -45,19 +45,3 @@ export const vueRules = {
 	'vue/no-unused-vars': 'off',
 	'vue/no-v-html': 'off'
 }
-// export const globals = {
-// 	console: 'readonly',
-// 	window: 'readonly',
-// 	document: 'readonly',
-// 	localStorage: 'readonly',
-// 	navigator: 'readonly',
-// 	fetch: 'readonly'
-// };
-
-// export const nodeGlobals = {
-// 	process: 'readonly',
-// 	global: 'readonly',
-// 	Buffer: 'readonly',
-// 	__dirname: 'readonly',
-// 	__filename: 'readonly'
-// };

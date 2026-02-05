@@ -7,7 +7,8 @@
         "dev": "vite",
         "build": "vite build",
         "preview": "vite preview",
-        "typecheck": "vue-tsc --noEmit"
+        "typecheck": "vue-tsc --noEmit",
+        "lint": "eslint src --ext .ts"
     },
     "dependencies": {
         "@tanstack/vue-query": "^5.92.9",
@@ -15,21 +16,22 @@
         "ant-design-vue": "^4.2.6",
         "axios": "^1.13.4",
         "dayjs": "^1.11.19",
+        "globals": "^17.3.0",
         "lodash": "^4.17.23",
         "pinia": "^3.0.4",
-        "pinia-plugin-persist": "^1.0.0",
+        "pinia-plugin-persistedstate": "^4.7.1",
         "remixicon": "^4.9.1",
         "socket.io-client": "^4.8.3",
         "vue": "^3.5.27",
-        "vue-router": "^5.0.1"
+        "vue-router": "^5.0.2"
     },
     "devDependencies": {
         "@eslint/js": "^9.39.2",
         "@tailwindcss/postcss": "^4.1.18",
-        "@types/node": "^25.2.0",
+        "@types/node": "^25.2.1",
         "@typescript-eslint/eslint-plugin": "^8.54.0",
         "@typescript-eslint/parser": "^8.54.0",
-        "@vitejs/plugin-vue": "^6.0.3",
+        "@vitejs/plugin-vue": "^6.0.4",
         "autoprefixer": "^10.4.24",
         "eslint": "^9.39.2",
         "eslint-plugin-vue": "^10.7.0",

@@ -2,8 +2,8 @@ import js from '@eslint/js'
 import tsParser from '@typescript-eslint/parser'
 import tsPlugin from '@typescript-eslint/eslint-plugin'
 import { rules } from '../shared/eslint/rules.js'
-
 import globals from 'globals';
+
 export default [
 	{
 		ignores: [
