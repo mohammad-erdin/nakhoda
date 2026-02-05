@@ -28,7 +28,7 @@ export function errorMiddleware(
 			error: 'Validation error',
 			code: 'VALIDATION_ERROR',
 			details: {
-				issues: err.errors.map((e) => ({
+				issues: err.issues.map((e) => ({
 					field: e.path.join('.'),
 					message: e.message,
 				})),
