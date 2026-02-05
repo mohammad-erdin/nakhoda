@@ -11,47 +11,47 @@ const userSettings: Map<string, { jobRetentionDays: number; theme: 'light' | 'da
 
 // Get settings
 router.get('/', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = req.user?.userId;
-    const settings = userSettings.get(userId || '') || {
-      jobRetentionDays: config.job.retentionDays,
-      theme: 'light' as const,
-      language: 'en',
-    };
+	try {
+		const userId = req.user?.userId;
+		const settings = userSettings.get(userId || '') || {
+			jobRetentionDays: config.job.retentionDays,
+			theme: 'light' as const,
+			language: 'en',
+		};
 
-    res.json(settings);
-  } catch (error) {
-    next(error);
-  }
+		res.json(settings);
+	} catch (error) {
+		next(error);
+	}
 });
 
 // Update settings
 router.patch('/', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = req.user?.userId;
-    if (!userId) {
-      res.status(401).json({ error: 'Unauthorized' });
-      return;
-    }
+	try {
+		const userId = req.user?.userId;
+		if (!userId) {
+			res.status(401).json({ error: 'Unauthorized' });
+			return;
+		}
 
-    const updates = settingsUpdateSchema.parse(req.body);
-    const currentSettings = userSettings.get(userId) || {
-      jobRetentionDays: config.job.retentionDays,
-      theme: 'light' as const,
-      language: 'en',
-    };
+		const updates = settingsUpdateSchema.parse(req.body);
+		const currentSettings = userSettings.get(userId) || {
+			jobRetentionDays: config.job.retentionDays,
+			theme: 'light' as const,
+			language: 'en',
+		};
 
-    const newSettings = {
-      ...currentSettings,
-      ...updates,
-    };
+		const newSettings = {
+			...currentSettings,
+			...updates,
+		};
 
-    userSettings.set(userId, newSettings);
+		userSettings.set(userId, newSettings);
 
-    res.json(newSettings);
-  } catch (error) {
-    next(error);
-  }
+		res.json(newSettings);
+	} catch (error) {
+		next(error);
+	}
 });
 
 export default router;

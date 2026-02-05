@@ -4,11 +4,11 @@ import { logger } from '../utils/logger.js';
 import { dispatchJob } from '../websocket/index.js';
 
 const JOB_ACTIONS = {
-  CONTAINER_CREATE: 'container.create',
-  CONTAINER_START: 'container.start',
-  CONTAINER_STOP: 'container.stop',
-  CONTAINER_RESTART: 'container.restart',
-  CONTAINER_DELETE: 'container.delete',
+	CONTAINER_CREATE: 'container.create',
+	CONTAINER_START: 'container.start',
+	CONTAINER_STOP: 'container.stop',
+	CONTAINER_RESTART: 'container.restart',
+	CONTAINER_DELETE: 'container.delete',
 } as const;
 
 export interface CreateContainerInput {
@@ -27,31 +27,31 @@ export interface ContainerActionResult {
 }
 
 export async function createContainer(input: CreateContainerInput): Promise<ContainerActionResult> {
-  // Ensure rudder is online
-  await RudderService.ensureRudderOnline(input.rudderId);
+	// Ensure rudder is online
+	await RudderService.ensureRudderOnline(input.rudderId);
 
-  const job = await JobService.createJob({
-    rudderId: input.rudderId,
-    action: JOB_ACTIONS.CONTAINER_CREATE,
-    params: {
-      image: input.image,
-      name: input.name,
-      ports: input.ports,
-      env: input.env,
-      mounts: input.mounts,
-      cmd: input.cmd,
-    },
-  });
+	const job = await JobService.createJob({
+		rudderId: input.rudderId,
+		action: JOB_ACTIONS.CONTAINER_CREATE,
+		params: {
+			image: input.image,
+			name: input.name,
+			ports: input.ports,
+			env: input.env,
+			mounts: input.mounts,
+			cmd: input.cmd,
+		},
+	});
 
-  logger.info('Container create job created', { jobId: job.id, rudderId: input.rudderId });
+	logger.info('Container create job created', { jobId: job.id, rudderId: input.rudderId });
 
-  // Dispatch job to rudder
-  await dispatchJob(input.rudderId, job.id, JOB_ACTIONS.CONTAINER_CREATE, job.params);
+	// Dispatch job to rudder
+	await dispatchJob(input.rudderId, job.id, JOB_ACTIONS.CONTAINER_CREATE, job.params);
 
-  return {
-    jobId: job.id,
-    status: 'running',
-  };
+	return {
+		jobId: job.id,
+		status: 'running',
+	};
 }
 
 export interface ContainerCommandInput {
@@ -60,63 +60,63 @@ export interface ContainerCommandInput {
 }
 
 export async function startContainer(input: ContainerCommandInput): Promise<ContainerActionResult> {
-  await RudderService.ensureRudderOnline(input.rudderId);
+	await RudderService.ensureRudderOnline(input.rudderId);
 
-  const job = await JobService.createJob({
-    rudderId: input.rudderId,
-    action: JOB_ACTIONS.CONTAINER_START,
-    params: { containerId: input.containerId },
-  });
+	const job = await JobService.createJob({
+		rudderId: input.rudderId,
+		action: JOB_ACTIONS.CONTAINER_START,
+		params: { containerId: input.containerId },
+	});
 
-  // Dispatch job to rudder
-  await dispatchJob(input.rudderId, job.id, JOB_ACTIONS.CONTAINER_START, job.params);
+	// Dispatch job to rudder
+	await dispatchJob(input.rudderId, job.id, JOB_ACTIONS.CONTAINER_START, job.params);
 
-  return { jobId: job.id, status: 'running' };
+	return { jobId: job.id, status: 'running' };
 }
 
 export async function stopContainer(input: ContainerCommandInput): Promise<ContainerActionResult> {
-  await RudderService.ensureRudderOnline(input.rudderId);
+	await RudderService.ensureRudderOnline(input.rudderId);
 
-  const job = await JobService.createJob({
-    rudderId: input.rudderId,
-    action: JOB_ACTIONS.CONTAINER_STOP,
-    params: { containerId: input.containerId },
-  });
+	const job = await JobService.createJob({
+		rudderId: input.rudderId,
+		action: JOB_ACTIONS.CONTAINER_STOP,
+		params: { containerId: input.containerId },
+	});
 
-  // Dispatch job to rudder
-  await dispatchJob(input.rudderId, job.id, JOB_ACTIONS.CONTAINER_STOP, job.params);
+	// Dispatch job to rudder
+	await dispatchJob(input.rudderId, job.id, JOB_ACTIONS.CONTAINER_STOP, job.params);
 
-  return { jobId: job.id, status: 'running' };
+	return { jobId: job.id, status: 'running' };
 }
 
 export async function restartContainer(input: ContainerCommandInput): Promise<ContainerActionResult> {
-  await RudderService.ensureRudderOnline(input.rudderId);
+	await RudderService.ensureRudderOnline(input.rudderId);
 
-  const job = await JobService.createJob({
-    rudderId: input.rudderId,
-    action: JOB_ACTIONS.CONTAINER_RESTART,
-    params: { containerId: input.containerId },
-  });
+	const job = await JobService.createJob({
+		rudderId: input.rudderId,
+		action: JOB_ACTIONS.CONTAINER_RESTART,
+		params: { containerId: input.containerId },
+	});
 
-  // Dispatch job to rudder
-  await dispatchJob(input.rudderId, job.id, JOB_ACTIONS.CONTAINER_RESTART, job.params);
+	// Dispatch job to rudder
+	await dispatchJob(input.rudderId, job.id, JOB_ACTIONS.CONTAINER_RESTART, job.params);
 
-  return { jobId: job.id, status: 'running' };
+	return { jobId: job.id, status: 'running' };
 }
 
 export async function deleteContainer(
-  input: ContainerCommandInput & { force?: boolean }
+	input: ContainerCommandInput & { force?: boolean }
 ): Promise<ContainerActionResult> {
-  await RudderService.ensureRudderOnline(input.rudderId);
+	await RudderService.ensureRudderOnline(input.rudderId);
 
-  const job = await JobService.createJob({
-    rudderId: input.rudderId,
-    action: JOB_ACTIONS.CONTAINER_DELETE,
-    params: { containerId: input.containerId, force: input.force },
-  });
+	const job = await JobService.createJob({
+		rudderId: input.rudderId,
+		action: JOB_ACTIONS.CONTAINER_DELETE,
+		params: { containerId: input.containerId, force: input.force },
+	});
 
-  // Dispatch job to rudder
-  await dispatchJob(input.rudderId, job.id, JOB_ACTIONS.CONTAINER_DELETE, job.params);
+	// Dispatch job to rudder
+	await dispatchJob(input.rudderId, job.id, JOB_ACTIONS.CONTAINER_DELETE, job.params);
 
-  return { jobId: job.id, status: 'running' };
+	return { jobId: job.id, status: 'running' };
 }

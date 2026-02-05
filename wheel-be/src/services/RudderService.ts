@@ -20,114 +20,114 @@ export interface RudderHealth {
 }
 
 export async function getRudders(status?: 'online' | 'offline'): Promise<Rudder[]> {
-  const sessions = await cache.getAllRudderSessions();
-  let rudders: Rudder[] = sessions.map((session) => ({
-    id: session.id,
-    hostname: session.hostname,
-    status: session.status,
-    dockerVersion: session.dockerVersion,
-    lastHeartbeat: session.lastHeartbeat,
-    createdAt: session.createdAt,
-  }));
+	const sessions = await cache.getAllRudderSessions();
+	let rudders: Rudder[] = sessions.map((session) => ({
+		id: session.id,
+		hostname: session.hostname,
+		status: session.status,
+		dockerVersion: session.dockerVersion,
+		lastHeartbeat: session.lastHeartbeat,
+		createdAt: session.createdAt,
+	}));
 
-  if (status) {
-    rudders = rudders.filter((r) => r.status === status);
-  }
+	if (status) {
+		rudders = rudders.filter((r) => r.status === status);
+	}
 
-  return rudders;
+	return rudders;
 }
 
 export async function getRudder(rudderId: string): Promise<Rudder> {
-  const session = await cache.getRudderSession(rudderId);
-  if (!session) {
-    throw new RudderNotFoundError(rudderId);
-  }
+	const session = await cache.getRudderSession(rudderId);
+	if (!session) {
+		throw new RudderNotFoundError(rudderId);
+	}
 
-  return {
-    id: session.id,
-    hostname: session.hostname,
-    status: session.status,
-    dockerVersion: session.dockerVersion,
-    lastHeartbeat: session.lastHeartbeat,
-    createdAt: session.createdAt,
-  };
+	return {
+		id: session.id,
+		hostname: session.hostname,
+		status: session.status,
+		dockerVersion: session.dockerVersion,
+		lastHeartbeat: session.lastHeartbeat,
+		createdAt: session.createdAt,
+	};
 }
 
 export async function getRudderHealth(rudderId: string): Promise<RudderHealth> {
-  const session = await cache.getRudderSession(rudderId);
-  if (!session) {
-    throw new RudderNotFoundError(rudderId);
-  }
+	const session = await cache.getRudderSession(rudderId);
+	if (!session) {
+		throw new RudderNotFoundError(rudderId);
+	}
 
-  const createdAt = new Date(session.createdAt).getTime();
-  const now = Date.now();
-  const uptime = Math.floor((now - createdAt) / 1000);
+	const createdAt = new Date(session.createdAt).getTime();
+	const now = Date.now();
+	const uptime = Math.floor((now - createdAt) / 1000);
 
-  return {
-    status: session.status,
-    uptime,
-    dockerVersion: session.dockerVersion,
-    lastHeartbeat: session.lastHeartbeat,
-  };
+	return {
+		status: session.status,
+		uptime,
+		dockerVersion: session.dockerVersion,
+		lastHeartbeat: session.lastHeartbeat,
+	};
 }
 
 export async function registerRudder(
-  rudderId: string,
-  hostname: string,
-  dockerVersion: string,
-  socketId: string
+	rudderId: string,
+	hostname: string,
+	dockerVersion: string,
+	socketId: string
 ): Promise<Rudder> {
-  const now = new Date().toISOString();
-  const session: cache.RudderSession = {
-    id: rudderId,
-    hostname,
-    dockerVersion,
-    status: 'online',
-    socketId,
-    lastHeartbeat: now,
-    createdAt: now,
-  };
+	const now = new Date().toISOString();
+	const session: cache.RudderSession = {
+		id: rudderId,
+		hostname,
+		dockerVersion,
+		status: 'online',
+		socketId,
+		lastHeartbeat: now,
+		createdAt: now,
+	};
 
-  await cache.setRudderSession(rudderId, session);
-  logger.info('Rudder registered', { rudderId, hostname });
+	await cache.setRudderSession(rudderId, session);
+	logger.info('Rudder registered', { rudderId, hostname });
 
-  return {
-    id: session.id,
-    hostname: session.hostname,
-    status: session.status,
-    dockerVersion: session.dockerVersion,
-    lastHeartbeat: session.lastHeartbeat,
-    createdAt: session.createdAt,
-  };
+	return {
+		id: session.id,
+		hostname: session.hostname,
+		status: session.status,
+		dockerVersion: session.dockerVersion,
+		lastHeartbeat: session.lastHeartbeat,
+		createdAt: session.createdAt,
+	};
 }
 
 export async function updateHeartbeat(rudderId: string): Promise<void> {
-  await cache.updateRudderHeartbeat(rudderId);
-  logger.debug('Rudder heartbeat updated', { rudderId });
+	await cache.updateRudderHeartbeat(rudderId);
+	logger.debug('Rudder heartbeat updated', { rudderId });
 }
 
 export async function setRudderOffline(rudderId: string): Promise<void> {
-  await cache.setRudderOffline(rudderId);
-  logger.info('Rudder set offline', { rudderId });
+	await cache.setRudderOffline(rudderId);
+	logger.info('Rudder set offline', { rudderId });
 }
 
 export async function removeRudder(rudderId: string): Promise<void> {
-  await cache.deleteRudderSession(rudderId);
-  logger.info('Rudder removed', { rudderId });
+	await cache.deleteRudderSession(rudderId);
+	logger.info('Rudder removed', { rudderId });
 }
 
 export async function ensureRudderOnline(rudderId: string): Promise<cache.RudderSession> {
-  const session = await cache.getRudderSession(rudderId);
-  if (!session) {
-    throw new RudderNotFoundError(rudderId);
-  }
-  if (session.status !== 'online') {
-    throw new RudderOfflineError(rudderId);
-  }
-  return session;
+	const session = await cache.getRudderSession(rudderId);
+	if (!session) {
+		throw new RudderNotFoundError(rudderId);
+	}
+	if (session.status !== 'online') {
+		throw new RudderOfflineError(rudderId);
+	}
+	return session;
 }
 
 export async function getRudderSocketId(rudderId: string): Promise<string | null> {
-  const session = await cache.getRudderSession(rudderId);
-  return session?.socketId || null;
+	const session = await cache.getRudderSession(rudderId);
+	return session?.socketId || null;
 }

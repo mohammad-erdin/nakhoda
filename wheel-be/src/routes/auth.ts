@@ -6,13 +6,13 @@ import { loginSchema } from '../utils/validation.js';
 const router: RouterType = Router();
 
 router.post('/login', async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const input = loginSchema.parse(req.body);
-    const result = await AuthService.login(input.username, input.password);
-    res.json(result);
-  } catch (error) {
-    next(error);
-  }
+	try {
+		const input = loginSchema.parse(req.body);
+		const result = await AuthService.login(input.username, input.password);
+		res.json(result);
+	} catch (error) {
+		next(error);
+	}
 });
 
 export default router;

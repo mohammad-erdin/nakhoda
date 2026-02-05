@@ -13,45 +13,45 @@ export interface LoginResult {
 }
 
 export async function login(username: string, password: string): Promise<LoginResult> {
-  const user = await userQueries.findByUsername(username);
+	const user = await userQueries.findByUsername(username);
   
-  if (!user) {
-    logger.warn('Login attempt for non-existent user', { username });
-    throw new UnauthorizedError('Invalid username or password');
-  }
+	if (!user) {
+		logger.warn('Login attempt for non-existent user', { username });
+		throw new UnauthorizedError('Invalid username or password');
+	}
 
-  const passwordMatch = await bcrypt.compare(password, user.password_hash);
+	const passwordMatch = await bcrypt.compare(password, user.password_hash);
   
-  if (!passwordMatch) {
-    logger.warn('Invalid password attempt', { username });
-    throw new UnauthorizedError('Invalid username or password');
-  }
+	if (!passwordMatch) {
+		logger.warn('Invalid password attempt', { username });
+		throw new UnauthorizedError('Invalid username or password');
+	}
 
-  await userQueries.updateLastLogin(user.id);
+	await userQueries.updateLastLogin(user.id);
 
-  const token = generateToken({
-    userId: user.id,
-    username: user.username,
-    role: user.role,
-  });
+	const token = generateToken({
+		userId: user.id,
+		username: user.username,
+		role: user.role,
+	});
 
-  logger.info('User logged in', { userId: user.id, username: user.username });
+	logger.info('User logged in', { userId: user.id, username: user.username });
 
-  return {
-    sessionToken: token,
-    user: {
-      id: user.id,
-      name: user.name || user.username,
-    },
-  };
+	return {
+		sessionToken: token,
+		user: {
+			id: user.id,
+			name: user.name || user.username,
+		},
+	};
 }
 
 export async function getUserById(userId: string): Promise<{ id: string; name: string } | null> {
-  const user = await userQueries.findById(userId);
-  if (!user) return null;
+	const user = await userQueries.findById(userId);
+	if (!user) return null;
   
-  return {
-    id: user.id,
-    name: user.name || user.username,
-  };
+	return {
+		id: user.id,
+		name: user.name || user.username,
+	};
 }

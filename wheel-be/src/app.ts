@@ -2,11 +2,11 @@ import express, { type Express } from 'express';
 import path from 'path';
 import routes from './routes/index.js';
 import {
-  // corsMiddleware,
-  // loggingMiddleware,
-  // rateLimitMiddleware,
-  // errorMiddleware,
-  notFoundMiddleware,
+	// corsMiddleware,
+	// loggingMiddleware,
+	// rateLimitMiddleware,
+	// errorMiddleware,
+	notFoundMiddleware,
 } from './middleware/index.js';
 
 const app: Express = express();
@@ -31,11 +31,12 @@ app.use('/api', notFoundMiddleware);
 // Serve frontend for non-API routes
 const staticPath = path.join(process.cwd(), 'public');
 app.use(express.static(staticPath, { index: false }));
-app.get('*', (_req, res) => {
-  res.sendFile(path.join(staticPath, 'index.html'), (err: any) => {
-    if (err) {
-      res.status(err?.status || 500).end();
-    }
-  });
+// Use a regex catch-all as the fallback route to avoid path-to-regexp parsing issues
+app.get(/.*/, (_req, res) => {
+	res.sendFile(path.join(staticPath, 'index.html'), (err: any) => {
+		if (err) {
+			res.status(err?.status || 500).end();
+		}
+	});
 });
 export default app;

@@ -15,18 +15,18 @@ export interface AuditLog {
 }
 
 function mapAuditLogRow(row: auditLogQueries.AuditLogRow): AuditLog {
-  return {
-    id: row.id,
-    userId: row.user_id,
-    rudderId: row.rudder_id,
-    action: row.action,
-    status: row.status as 'success' | 'failed',
-    params: row.params || undefined,
-    result: row.result || undefined,
-    error: row.error || undefined,
-    ipAddress: row.ip_address || undefined,
-    createdAt: row.created_at.toISOString(),
-  };
+	return {
+		id: row.id,
+		userId: row.user_id,
+		rudderId: row.rudder_id,
+		action: row.action,
+		status: row.status as 'success' | 'failed',
+		params: row.params || undefined,
+		result: row.result || undefined,
+		error: row.error || undefined,
+		ipAddress: row.ip_address || undefined,
+		createdAt: row.created_at.toISOString(),
+	};
 }
 
 export interface CreateAuditLogInput {
@@ -41,9 +41,9 @@ export interface CreateAuditLogInput {
 }
 
 export async function createAuditLog(input: CreateAuditLogInput): Promise<AuditLog> {
-  const row = await auditLogQueries.create(input);
-  logger.debug('Audit log created', { action: input.action, status: input.status });
-  return mapAuditLogRow(row);
+	const row = await auditLogQueries.create(input);
+	logger.debug('Audit log created', { action: input.action, status: input.status });
+	return mapAuditLogRow(row);
 }
 
 export interface ListAuditLogsFilter {
@@ -64,23 +64,23 @@ export interface PaginatedAuditLogs {
 }
 
 export async function listAuditLogs(filter: ListAuditLogsFilter = {}): Promise<PaginatedAuditLogs> {
-  const page = filter.page || 1;
-  const limit = filter.limit || 50;
+	const page = filter.page || 1;
+	const limit = filter.limit || 50;
 
-  const { logs, total } = await auditLogQueries.list({
-    userId: filter.userId,
-    rudderId: filter.rudderId,
-    status: filter.status,
-    days: filter.days,
-    page,
-    limit,
-  });
+	const { logs, total } = await auditLogQueries.list({
+		userId: filter.userId,
+		rudderId: filter.rudderId,
+		status: filter.status,
+		days: filter.days,
+		page,
+		limit,
+	});
 
-  return {
-    items: logs.map(mapAuditLogRow),
-    page,
-    limit,
-    total,
-    totalPages: Math.ceil(total / limit),
-  };
+	return {
+		items: logs.map(mapAuditLogRow),
+		page,
+		limit,
+		total,
+		totalPages: Math.ceil(total / limit),
+	};
 }
