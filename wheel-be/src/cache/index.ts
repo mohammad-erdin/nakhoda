@@ -126,7 +126,7 @@ export async function testConnection(): Promise<boolean> {
   }
 }
 
-export async function closeConnection(): Promise<void> {
+export async function closeRedis(): Promise<void> {
   await redis.quit();
   logger.info('Redis connection closed');
 }

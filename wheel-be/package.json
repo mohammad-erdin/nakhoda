@@ -5,10 +5,11 @@
   "type": "module",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "tsx watch src/server.ts && exit 0",
     "build": "tsc",
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
+    "copy-fe": "cd ../wheel-fe && pnpm i && pnpm run build && rm -rf ../wheel-be/public && mv dist ../wheel-be/public",
     "lint": "eslint src --ext .ts"
   },
   "dependencies": {

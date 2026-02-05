@@ -26,7 +26,6 @@ export const config = {
   nodeEnv: getEnv('NODE_ENV', 'development'),
   port: getEnvNumber('PORT', 3000),
   wsPort: getEnvNumber('WS_PORT', 8080),
-
   db: {
     host: getEnv('DB_HOST', 'localhost'),
     port: getEnvNumber('DB_PORT', 5432),
@@ -41,7 +40,7 @@ export const config = {
   },
 
   jwt: {
-    secret: requireEnv('JWT_SECRET', 'dev-secret-key-do-not-use-in-production'),
+    secret: requireEnv('JWT_SECRET', ''),
     expiresIn: getEnv('JWT_EXPIRES_IN', '24h'),
   },
 
@@ -54,7 +53,7 @@ export const config = {
 
   // Accept a comma-separated list of allowed origins (e.g. "http://localhost:5173,http://localhost:5174")
   cors: {
-    origin: getEnv('CORS_ORIGIN', 'http://localhost:5173').split(',').map(s => s.trim()).filter(Boolean),
+    origin: getEnv('CORS_ORIGIN', 'http://localhost').split(',').map(s => s.trim()).filter(Boolean),
   },
 
   rateLimit: {
