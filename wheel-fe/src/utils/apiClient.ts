@@ -1,5 +1,3 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
-
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 interface RequestOptions {
@@ -23,13 +21,9 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
 		headers.Authorization = `Bearer ${token}`;
 	}
 
-	const url = `${API_BASE_URL}${path}`;
 	const method = options.method || 'GET';
 	const body = options.body ? JSON.stringify(options.body) : undefined;
-
-	// console.log(`[API] ${method} ${url}`, body ? JSON.parse(body) : '');
-
-	const response = await fetch(url, {
+	const response = await fetch(path, {
 		method,
 		headers,
 		body,

@@ -46,8 +46,8 @@ services:
       - "3000:3000"
     environment:
       NODE_ENV: production
-      PORT: ${PORT:-}
-      WS_PORT: ${WS_PORT:-}
+      BE_PORT: ${BE_PORT:-}
+      FE_WS_PORT: ${FE_WS_PORT:-}
       DB_HOST: ${DB_HOST:-}
       DB_PORT: ${DB_PORT:-}
       DB_USER: ${DB_USER:-}
@@ -60,7 +60,6 @@ services:
       RUDDER_TOKENS: ${RUDDER_TOKENS:-}
       JOB_RETENTION_DAYS: ${JOB_RETENTION_DAYS:-}
       JOB_TIMEOUT_MS: ${JOB_TIMEOUT_MS:-}
-      CORS_ORIGIN: ${CORS_ORIGIN:-}
       RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS:-}
       RATE_LIMIT_MAX: ${RATE_LIMIT_MAX:-}
       LOG_FORMAT: ${LOG_FORMAT:-}

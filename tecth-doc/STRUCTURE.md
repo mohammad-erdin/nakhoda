@@ -201,15 +201,15 @@ NODE_ENV=development
 # ======================
 # WHEEL-BE (Backend API)
 # ======================
-PORT=3000
-WS_PORT=8080
+BE_PORT=3000
+FE_WS_PORT=8080
 
 # ======================
 # WHEEL-FE (Frontend)
 # ======================
-VITE_PORT=5173
-VITE_API_BASE_URL=http://localhost:3000
-VITE_WS_URL=ws://localhost:8081
+FE_VITE_PORT=5173
+FE_API_URL=http://localhost:3000
+FE_WS_URL=ws://localhost:8081
 
 # ======================
 # DATABASE (PostgreSQL)
@@ -238,11 +238,6 @@ RUDDER_TOKENS=rudder_token_1,rudder_token_2
 # ======================
 JOB_RETENTION_DAYS=30
 JOB_TIMEOUT_MS=300000
-
-# ======================
-# CORS
-# ======================
-CORS_ORIGIN=http://localhost:5173
 
 # ======================
 # RATE LIMITING

@@ -24,14 +24,15 @@ export const useAuth = defineStore('auth', () => {
 		isLoading.value = true;
 		error.value = null;
 		try {
-			const data = await apiPost<LoginResponse>(API_ENDPOINTS.AUTH.LOGIN, {
+			const response = await apiPost<LoginResponse>(API_ENDPOINTS.AUTH.LOGIN, {
 				username,
 				password
 			});
-			token.value = data.sessionToken || 'auth-token';
-			user.value = data.user;
-			localStorage.setItem('auth_token', token.value);
-			await checkAuth();
+			console.info(response);
+			// token.value = response.sessionToken || 'auth-token';
+			// user.value = response.user;
+			// localStorage.setItem('auth_token', token.value);
+			// await checkAuth();
 		} catch (err) {
 			error.value = (err as Error).message;
 			throw err;

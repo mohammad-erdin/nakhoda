@@ -3,9 +3,9 @@ import path from 'path';
 import routes from './routes/index.js';
 import {
 	// corsMiddleware,
-	// loggingMiddleware,
+	loggingMiddleware,
 	// rateLimitMiddleware,
-	// errorMiddleware,
+	errorMiddleware,
 	notFoundMiddleware,
 } from './middleware/index.js';
 
@@ -15,11 +15,9 @@ const app: Express = express();
 app.set('trust proxy', 1);
 
 // Middleware
-// app.use(express.json());
-// app.use(corsMiddleware);
-// app.use(loggingMiddleware);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 // app.use('/api', rateLimitMiddleware);
-// app.use(errorMiddleware);
 
 // Health check endpoint
 app.get('/health', (_req, res) => res.send('ok')); 
@@ -39,4 +37,8 @@ app.get(/.*/, (_req, res) => {
 		}
 	});
 });
+
+// need to be the last middleware
+app.use(errorMiddleware);
+app.use(loggingMiddleware);
 export default app;

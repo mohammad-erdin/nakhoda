@@ -384,8 +384,8 @@ router.get('/live', (req, res) => {
 **File**: `wheel-be/src/server.ts`
 
 ```typescript
-const server = app.listen(PORT, () => {
-  logger.info(`Server listening on port ${PORT}`);
+const server = app.listen(BE_PORT, () => {
+  logger.info(`Server listening on port ${BE_PORT}`);
 });
 
 process.on('SIGTERM', async () => {

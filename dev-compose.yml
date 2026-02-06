@@ -45,8 +45,8 @@ services:
     container_name: nakhoda-wheel-be
     environment:
       NODE_ENV: ${NODE_ENV}
-      PORT: ${PORT}
-      WS_PORT: ${WS_PORT}
+      BE_PORT: ${BE_PORT}
+      FE_WS_PORT: ${FE_WS_PORT}
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
       DB_USER: ${DB_USER}
@@ -59,12 +59,11 @@ services:
       RUDDER_TOKENS: ${RUDDER_TOKENS}
       JOB_RETENTION_DAYS: ${JOB_RETENTION_DAYS}
       JOB_TIMEOUT_MS: ${JOB_TIMEOUT_MS}
-      CORS_ORIGIN: ${CORS_ORIGIN}
       RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS}
       RATE_LIMIT_MAX: ${RATE_LIMIT_MAX}
       LOG_FORMAT: ${LOG_FORMAT}
     ports:
-      - "0.0.0.0:${PORT}:3000"
+      - "0.0.0.0:${BE_PORT}:3000"
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:3000/health || exit 1"]
       interval: 10s
@@ -91,10 +90,10 @@ services:
       dockerfile: wheel-fe/Dockerfile
     container_name: nakhoda-wheel-fe
     environment:
-      VITE_API_BASE_URL: ${VITE_API_BASE_URL}
-      VITE_WS_URL: ${VITE_WS_URL}
+      FE_API_URL: ${FE_API_URL}
+      FE_WS_URL: ${FE_WS_URL}
     ports:
-      - "0.0.0.0:${VITE_PORT}:5173"
+      - "0.0.0.0:${FE_VITE_PORT}:5173"
     volumes:
       - ./wheel-fe/src:/app/src
       - ./wheel-fe/index.html:/app/index.html

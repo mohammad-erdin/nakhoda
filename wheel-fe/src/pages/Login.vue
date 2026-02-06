@@ -78,7 +78,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { onMounted, reactive } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useAuth } from '@/stores/auth';
 import { notification } from 'ant-design-vue';
@@ -110,7 +110,12 @@ const handleLogin = async () => {
 const onFinishFailed = (errorInfo: any) => {
 	console.log('Failed:', errorInfo);
 };
-
+onMounted(() => {
+	if(import.meta.env.DEV == true){
+		formData.username = 'admin';
+		formData.password = 'admin';
+	}
+});
 </script>
 
 <style scoped lang="scss">

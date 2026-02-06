@@ -5,7 +5,7 @@ import { useRudders } from '@/stores/rudders';
 import { useJobs } from '@/stores/jobs';
 import { useContainers } from '@/stores/containers';
 
-const WS_URL = import.meta.env.VITE_WS_URL || '';
+const WS_URL = import.meta.env.FE_WS_URL || '';
 export function useWebSocket() {
 	const socket = ref<Socket | null>(null);
 	const isConnected = ref(false);

@@ -24,8 +24,8 @@ function getEnvNumber(key: string, defaultValue: number): number {
 
 export const config = {
 	nodeEnv: getEnv('NODE_ENV', 'development'),
-	port: getEnvNumber('PORT', 3000),
-	wsPort: getEnvNumber('WS_PORT', 8080),
+	port: getEnvNumber('BE_PORT', 3000),
+	wsPort: getEnvNumber('FE_WS_PORT', 8080),
 	db: {
 		host: getEnv('DB_HOST', 'localhost'),
 		port: getEnvNumber('DB_PORT', 5432),
@@ -51,19 +51,10 @@ export const config = {
 		timeoutMs: getEnvNumber('JOB_TIMEOUT_MS', 300000),
 	},
 
-	// Accept a comma-separated list of allowed origins (e.g. "http://localhost:5173,http://localhost:5174")
-	cors: {
-		origin: getEnv('CORS_ORIGIN', 'http://localhost').split(',').map(s => s.trim()).filter(Boolean),
-	},
-
 	rateLimit: {
 		windowMs: getEnvNumber('RATE_LIMIT_WINDOW_MS', 60000),
 		max: getEnvNumber('RATE_LIMIT_MAX', 100),
 	},
-
-	// Logging format: 'string' (human-friendly) or 'json' (structured logs)
-	// Defaults to 'json' in production and 'string' in development
-	logFormat: getEnv('LOG_FORMAT', ''),
 } as const;
 
 export type Config = typeof config;

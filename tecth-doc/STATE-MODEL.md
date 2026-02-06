@@ -512,7 +512,7 @@ export function useWebSocket() {
   const containers = useContainers();
   const ui = useUI();
 
-  const socket = io(import.meta.env.VITE_WS_URL, {
+  const socket = io(import.meta.env.FE_WS_URL, {
     auth: { token: useAuth().token },
   });
 

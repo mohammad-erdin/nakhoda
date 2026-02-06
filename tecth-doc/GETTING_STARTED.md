@@ -195,9 +195,9 @@ All settings are in the root [.env]../.env) file:
 NODE_ENV=development
 
 # Ports
-PORT=3000
-WS_PORT=8080
-VITE_PORT=5173
+BE_PORT=3000
+FE_WS_PORT=8080
+FE_VITE_PORT=5173
 
 # Database
 DB_USER=nakhoda
@@ -294,8 +294,8 @@ docker exec nakhoda-rudder-1 telnet wheel-be 8080
 lsof -i :5173
 
 # Kill the process or change port in .env
-PORT=3001
-VITE_PORT=5174
+BE_PORT=3001
+FE_VITE_PORT=5174
 ```
 
 ---
